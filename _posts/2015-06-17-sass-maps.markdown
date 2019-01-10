@@ -1,0 +1,84 @@
+---
+layout: post
+title:  "SASS Maps的一些用法!"
+date:   2015-06-17 18:27:28
+categories: jekyll update
+tag:    sass
+---
+
+SASS(3.3以上版本)推出了[Maps功能][sass#map].有点类似于面向对象封装的思想, 我们可以对数据进行封装
+
+{% highlight scss %}
+$map: (key1: value1, key2: value2, key3: value3);
+{% endhighlight %}
+
+如范例所示, 我们可以将一些数据以key-value的形式存在一个变量里面.
+
+“然并卵, 我们用变量存储值很好啊”
+
+不是的, 我们都知道sass可以设置变量, 让我们可以统一定制一些常用的数据. 但是随便变量的增多, 管理变量, 避免变量冲突给我们带来困惑, 特别是在多人开发项目的情况下.
+
+所以咯, 来看这么用先, 最基本用法是通过声明之后, 通过map-get获取:
+
+{% highlight scss %}
+$map: (key1: value1, key2: value2, key3: value3);
+.class {
+    attribue: map-get($map, key1)
+}
+// .class {attribue : value1}
+{% endhighlight %}
+
+我们觉得这样获取数据太繁琐, 跟我们高效开发的理念相违背, 我们需要一点魔法.
+
+{% highlight scss %}
+$colors: (
+    red : #f00,
+    white: #fff
+);
+$function color($color-name) {
+    @return map-get($colors, $color-name);
+}
+.class {
+    color: color(red);
+}
+// .class { color: #f00;}
+{% endhighlight %}
+
+这样的话, 配合自定义函数, 我们可以讲一组数据封装后, 按需调用输出. 
+
+那如何添加值呢? sass提供map-merge来增加值.
+
+
+这里再说一种用法, maps支持[@each directive][sass#each-multi-assign], 配合上这个特性, 我们还可以:
+
+但我们由一些特殊按钮需要定位并生成类时:
+{% highlight css %}
+.icon-phone     {background-position: top left;}
+.icon-message   {background-position: top right;}
+.icon-start     {background-position: bottom right;}
+{% endhighlight %}
+
+那我们可以这样批量生成:
+{% highlight scss %}
+$background-position: (
+    phone       : top left,
+    message     : top right,
+    start       : bottom right
+);
+@each $key, $value in $background-position {
+    .icon-#{$key} {
+        background-position: $value;
+    }
+}
+{% endhighlight %}
+
+结语: 谢谢您看到这里, 如果文章中有错误, 欢迎指出, 谢谢.
+
+参考:
+
+* [http://sass-lang.com/documentation/file.SASS_REFERENCE.html#maps][sass#map]
+
+* [http://sass-lang.com/documentation/file.SASS_REFERENCE.html#each-multi-assign][sass#each-multi-assign]
+
+[sass#map]:    http://sass-lang.com/documentation/file.SASS_REFERENCE.html#maps
+[sass#each-multi-assign]: http://sass-lang.com/documentation/file.SASS_REFERENCE.html#each-multi-assign

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="author" content="90arther">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <title></title>
+    <link rel="stylesheet" href="http://90arther.net/css/global.css"/>
+    <link rel="stylesheet"  href="css/global.css"/>
+</head>
+<body>
+<h1>响应式页面那些事— Author:90Arther</h1>
+<p>隐隐觉得，明年是移动端的年代了。而且明年，2014年！HTML5将于2014年完成标准规范了。对于我们前端来说，总是满怀期待。</p>
+<p>最近的项目中制作手机端的网页，对我来说，没做过的技术真的很苦逼。只能一点点google，查询官网文档，请教组长。。。总算完成了这个项目了。在这个过程中，我学到很多技术，这里分享一下。</p>
+<h2>响应式一些知识</h2>
+<p>1、字体</p>
+<p>在IOS、Android等一些手机中，都有设置默认字体。</p>
+<p>在IOS中默认字体分为三类：</p>
+<ul>
+    <li>英文和数字字体：_H_Helvetica.ttc 和 _H_HelveticaNeue.ttc</li>
+    <li>中文字体：STHeiti-Light.ttc 和 STHeiti-Medium.ttc (黑体-简与黑体-繁的细体， 黑体-简与黑体-繁的中黑)</li>
+    <li>锁屏时间字体：LockClock.ttf</li>
+</ul>
+<p>在Android中：</p>
+<ul>
+    <li>英文和数字字体：Droid Sans.ttf </li>
+    <li>中文字体：Droid Sans Fallback.ttf</li>
+</ul>
+<p>在设计稿中不一定是用这些字体的，但是还要改成用系统字体。所以我们只需要声明一下全局字体就可以了，其它单独用其它CSS选择器设置。像下面这样，当然，在webkit内核手机端浏览器，我们要让文本不可选的话，可以加上-webkit-user-select: none;另外，取消webkit最小字体大小为12px的默认设置。 (\5FAE\8F6F\96C5\9ED1是微软雅黑的unicode编码)</p>
+<pre>
+    <code>
+        font-family: "\5FAE\8F6F\96C5\9ED1", Helvetica; -webkit-user-select: none; -webkit-text-size-adjust: none;
+    </code>
+</pre>
+<p>2、阻止浏览器自动调整页面大小</p>
+<p>IOS和Android浏览器都基于webkit(http:www.webkit.org/)核心。这两种浏览器以及很多其他浏览器（如：Opera Mobile），都支持用viewport meat 元素覆盖默认的的画布缩放设置。只需要在HTML的&lt;head&gt;标签中插入一个&lt;meta&gt;标签。&lt;meta&gt;标签中可以设置具体的宽度（如像素值）或者缩放比例如2.0（设备实际尺寸的两倍）。下面是一个将页面放大到设备实际尺寸两倍显示的meta标签的示例：</p>
+<pre>
+    <code>
+        &lt;meta name="viewport" content="width=device-width,initial-scale=2.0"/&gt;
+        &lt;meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/&gt;
+    </code>
+</pre>
+<p>3、禁用自动拨号，如果想重新开启则定义   &lt;a href=“tel:10086”&gt;中国移动&lt;/a&gt;</p>
+<p>在移动端的一些设备上，当页面上有类似电话号码的一行数字时，设备会用自己的默认样式重置你的数字行。（如：我的blog里电话号码在手机端打开就会自动变成蓝色字体）。使用下面的meta取消这个默认设置，另外，如果需要这个拨号功能，可以像下面这样加a标签并设置href为你目标号码，如10086。</p>
+<pre>
+    <code>
+        &lt;meta name="format-detection" content="telephone=no" /&gt;
+        &lt;a href=“tel:10086”&gt;中国移动&lt;/a&gt;
+    </code>
+</pre>
+<h2>工具的准备：</h2>
+<ol>
+    <li>一个调整浏览器尺寸的插件。
+        <p>因为移动设备的尺寸很多，你需要在浏览器安装一个可自定义窗口尺寸的插件。一般开发我们都用chrome与firefox（有人用IE么？当然,IE11确实也是一个好选择）。如果用firefox，可以使用firebug里面的resize。如果用chrome，可以使用chrome自带的overrides.或者使用一个叫resize windows插件，这个插件包含一些常见的手机尺寸，挺好用的。如果使用IE11。可以用自带的“仿真”（在f12开发工具下按ctrl+8）。 </p>
+        <ul>
+            <li><a href="http://getfirebug.com/" target="_blank">firebug</a></li>
+            <li><a href="https://chrome.google.com/webstore/detail/window-resizer/kkelicaakdanhinjdeammmilcgefonfh?utm_source=plus" target="_blank">chrome resize window</a></li>
+            <li><a href="http://windows.microsoft.com/zh-cn/internet-explorer/ie-11-worldwide-languages" target="_blank">IE11</a></li>
+        </ul>
+        <p>这三个工具都很好用，我本身习惯chrome，所以以下也是用chrome做示例。</p>
+    </li>
+</ol>
+<h2>使用IIS服务器或者apache搭建局域网网站让手机直接测试</h2>
+<p>虽然前面有介绍各种调整尺寸的小工具，但是其实那只是模拟的环境。最后我们还需要用真机来测试。那如何测试呢？我们如果每次测试都将网站用数据线拉到手机，然后用手机的浏览器打开测试，那有多蛋疼啊（而且iphone还不支持用数据线传文件到手机）。当然如果能将页面上传到外网的服务器，我们输入域名直接访问肯定好啦。可是普通开发者的我们没有经费啊。但是还有其它办法，就是在局域网搭建一个网站，手机通过输入内网IP地址打开网页。说实话，这方法比搭建外域服务器方便多了，因为局域网的网速一般都能几M的。怎么实现呢？一起来弄吧。（下篇博客将介绍用apache搭建局域网网站）</p>
+<p>1、使用IIS搭建局域网能够访问的网站。</p>
+<p>在win7平台，我们选择IIS服务器。分以下步骤进行(准备：win7系统电脑、wifi、可连接wifi的手机)。</p>
+<p>在win7可以建立多个网站，同时供使用的端口也比较多（在XP系统只能使用8080，未经验证，有XP系统的童鞋可以测试一下）。我是看了这个<a href="http://ons.me/147.html" target="_blank">教程</a>。</p>
+<p>a、打开控制面板——程序与功能——右侧的“打开与关闭windows功能”——找到“Internet 信息服务”，将里面的子文件全部打勾。点击“确定”。——确定等待安装完成。</p>
+<P>b、回到控制面板，打开管理工具——Internet 信息服务(IIS)管理器。选中“Default Web Site”，双击中间的“ASP”，把“启用父路径”改为“True”。单击右侧“高级设置”，在物理路径选择你网站的目录。</p>
+<p>c、回到IIS，单击右侧的“绑定...”，选中你要绑定的网站，点“编辑”。如果是一台电脑，只修改后面的端口号就行，可以随意修改数字。如果是办公室局域网，点击下拉框，选择自己电脑上的局域网IP，例如：192.168.**.**，然后修改端口号。回到IIS，如果右侧显示停止，就选择启动，然后点击下面的浏览网站，就可以打开你绑定文件夹里面的网站了</p>
+<p>d、手机，连接上wifi。手机输入IP地址192.168.**.**:端口号（我在宿舍的内网IP地址是192.168.1.103,IIS的端口号是8088,所以我输入192.168.1.103）。完成。</p>
+<p>PS:如果还是不行，估计是防火墙的原因，将电脑的防火墙关闭。</p>
+<p>2、使用apache搭建局域网网站</p>
+<p>之前我是xampp安装本场的各种工具的，包括apache、mysql、phpmyadmin、PHP。现在就用这个做示例吧。</p>
+<p>首先启用Rewrite模块,在windows系统中，安装了XAMPP之后，该模块是默认打开的。</p>
+<p>安装好XAMPP之后，httpd-vhosts.conf扩展是默认开户的，如果你使用其他的开发环境，可能需要打开httpd.conf文件（C:\xampp\apache\conf\），找到#Includeconf\extra\httpd-vhosts.conf这一行，将前面的#注释去掉，以开户httpd-vhosts.conf扩展。默认Document是"C:/xampp/htdocs/"，我们将其修改成以下目标，将设置IP地址与端口号。</p>
+<pre>
+    <code>
+        &lt;VirtualHost 192.168.1.103:80&gt;
+            ##ServerAdmin postmaster@dummy-host.localhost
+            DocumentRoot "C:/xampp/htdocs/github/90arther/public"
+            ##ServerName 90arther.com
+            ##ServerAlias www.90arther.com
+            ##ErrorLog "/90arther/error.log"
+            ##CustomLog "/90arther/access.log" combined
+        &lt;/VirtualHost&gt;
+    </code>
+</pre>
+<p>接下来，就是用手机连续电脑所连局域网的WIFI了,输入192.168.1.103:80访问网站。</p>
+<h2>px转em小工具。</h2>
+<p>因为手机的屏幕各式各样，我们需要做一下响应式设计。流式布局，使用百分比。但是我最后发现，用百分比在有些情况下，并不是最好的选择。假如一个父元素里面包含两个子元素，一个是固定高度，一个是根据文章自适应高度，那就无法用百分比布局，所以有时候属性跟标签都要用对地方才行啊。</p>
+<p>下面这个是em与px之间转换的在线工具：<a href="http://pxtoem.com/" target="_blank">http://pxtoem.com/</a></p>
+
+<footer>
+</footer>
+
+<!-- baidu sitecenter and google-analytics start -->
+<script src="/common/websitestatistic/websitestatistic.js" type="text/javascript"></script>
+<!-- baidu sitecenter and google-analytics end -->
+
+</body>
+</html>

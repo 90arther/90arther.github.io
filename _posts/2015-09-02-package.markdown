@@ -1,0 +1,191 @@
+---
+layout: post
+title:  "前端模块管理!"
+date:   2015-09-01 16:27:28
+categories: jekyll update
+tag: npm grunt gulp fis webpack
+---
+
+从2014年[yahoo宣布停止开发YUI][RegardingYUI]，曾经想一套框架可以包含各种各样的开发需求，而其实，大型框架无法应对我们日益增长的开发需求。
+
+去年很流行用[grunt][grunt]来管理各个模块，但是，逐渐发现grunt的缺点，一是配置任务的方式，grunt是一种通过配置文件来执行任务，不够灵活。二是运行任务的方式，grunt多是一种顺序执行的概念。
+
+{% highlight javascript %}
+module.exports = function(grunt) {
+
+    // Project configuration.
+    grunt.initConfig({
+        pkg: grunt.file.readJSON('package.json'),
+        uglify: {
+            options: {
+            banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+            },
+            build: {
+                src: 'src/<%= pkg.name %>.js',
+                dest: 'build/<%= pkg.name %>.min.js'
+
+            }
+        }
+    });
+
+    // Load the plugin that provides the "uglify" task.
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+
+    // Default task(s).
+    grunt.registerTask('default', ['uglify']);
+};
+{% endhighlight %}
+
+有些人开始转向[gulp][gulp]来管理，因为gulp是基于数据流的形式来运行以及并发的运行模式, 具体参考：[gulp vs grunt][gulp vs grunt]。
+
+{% highlight javascript %}
+var gulp = require('gulp');
+
+gulp.task('default', function() {
+  // place code for your default task here
+});
+{% endhighlight %}
+
+而随着项目发展，我们发现，由于配置文件的形式与网站页面数量的增多导致维护越来越困难。
+
+我们希望通过一个打包来完成加载模块、合并文件、预处理文件等操作。
+
+
+### 欢迎新人[webpack][webpack#documention]登场
+
+webpack是一个模块打包器，一个根据依赖加载模块并打包生成静态文件。
+
+#### 在认识新人之前，我们先充电一下：
+
+* CommonJS
+* AMD
+
+
+CommonJS让每个模块在自己的命名空间内运行来解决了js的作用域问题, 通过两个工具（require和module）完成以上功能
+require: 加载一个模块到现在的作用域内。
+module: 提供模块暴露出来的接口功能。
+
+{% highlight javascript %}
+// moduleA.js
+module.exports = function( value  ){
+    return value*2;
+
+}
+// moduleB.js
+var multiplyBy2 = require('moduleA');
+var result = multiplyBy2(4);
+// 8
+{% endhighlight %}
+
+AMD（Asynchronous Module Definition）异步模块定义, 对于同步加载的缺陷，我们用COMMONJS来加载异步模块, 而AMD就是一种异步模块定义的方式。
+
+模块用一个define函数来定义：
+
+{% highlight javascript %}
+define(id?: String, dependencies?: String[], factory: Function|Object);
+// id: 定义模块名字， 可选
+// dependencies: 定义模块依赖，数组类型
+// factory： 最后一个是定义该模块的人，可以是函数也可以是对象
+
+// Example: 
+define('myModule', ['jquery'], function($) {
+     // $ is the export of the jquery module.
+     $('body').text('hello world');
+});
+// and use it
+define(['myModule'], function(myModule) {});
+{% endhighlight %}
+
+Anoymous module匿名模块
+{% highlight javascript %}
+define(['jquery'], function($) {
+    $('body').text('hello world');
+});
+{% endhighlight %}
+
+Multiple dependencies 多个模块
+{% highlight javascript %}
+define(['jquery', './math.js'], function($, math) {
+    // $ and math are the exports of the jquery module.
+    $('body').text('hello world');
+});
+{% endhighlight %}
+
+
+Export value, 那如果运用模块呢, 让模块暴露一些春光给我们呢：
+{% highlight javascript %}
+define(['jquery'], function($) {
+
+    var HelloWorldize = function(selector){
+        $(selector).text('hello world');
+    };
+    return HelloWorldize;
+
+});
+{% endhighlight %}
+
+
+说了这么多，那跟webpack有什么关系呢？webpack是模块打包器，支持[多种模块定义方式][motivation]：
+
+* &lt;script-tag&gt; style
+* CommonJs
+* AMD and some dialects of is
+* ES6 modules
+* and more...
+
+
+我们根据文档，来看怎么使用：
+
+创建一个entry.js
+{% highlight javascript %}
+// entry.js
+document.write('It works.');
+{% endhighlight %}
+
+创建一个index.html
+{% highlight javascript %}
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <script type="text/javascript" src="bundle.js" charset="utf-8"></script>
+    </body>
+</html>
+{% endhighlight %}
+
+接下来运行下面命令:
+{% highlight javascript %}
+$ webpack ./entry.js bundle.js
+{% endhighlight %}
+
+这个步骤将编译文件并创建一个捆绑的文件, 打开Index.html：
+{% highlight text %}
+It works.
+{% endhighlight %}
+
+我觉得[文档例子][webpack-tutorials]更全，所以我们分享一点使用心得：
+
+> 工具这么多，最主要是几点： 内容嵌入、定位资源、声明依赖。在一开始选择的时候，最好分析这些工具的目录架构与开发模式，我们需要做到迁移方便。
+> 什么是迁移方便呢？也就是说，我们不喜欢因为工具的bug而导致项目出问题，我们也不喜欢项目一旦用了某个工具就摆脱不了。
+
+感觉定了个大主题，说的东西太大范围，并不能每样详细说明，请见谅。
+
+
+#### 参考：
+
+* [RegardingYUI][RegardingYUI]
+* [grunt][grunt]
+* [gulp][gulp]
+* [webpack#documention][webpack#documention]
+* [gulp vs grunt][gulp vs grunt]
+* [motivation][motivation]
+* [webpack-tutorials][webpack-tutorials]
+
+[RegardingYUI]: http://yahooeng.tumblr.com/post/96098168666/important-announcement-regarding-yui
+[grunt]: http://gruntjs.com/
+[gulp]: http://gulpjs.com/
+[webpack#documention]: https://webpack.github.io
+[gulp vs grunt]: http://sixrevisions.com/web-development/grunt-vs-gulp/
+[motivation]: http://webpack.github.io/docs/motivation.html
+[webpack-tutorials]: http://webpack.github.io/docs/tutorials/getting-started/

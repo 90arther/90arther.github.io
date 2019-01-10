@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Youmi-gitlab-preview-img</title>
+<meta name="author" content="Alvaro Trigo Lopez" />
+<meta name="description" content="fullPage plugin by Alvaro Trigo. Create fullscreen pages fast and simple. One page scroll jquery plugin like iPhone 5 website." />
+<meta name="keywords"  content="fullpage,jquery,alvaro,trigo,plugin,fullscren,screen,full,iphone5,apple" />
+<meta name="Resource-type" content="Document" />
+
+
+<link rel="stylesheet" type="text/css" href="jquery.fullPage.css" />
+<link rel="stylesheet" type="text/css" href="example3.css" />
+
+<!--[if IE]>
+        <script type="text/javascript">
+             var console = { log: function() {} };
+        </script>
+    <![endif]-->
+
+<script src="jquery.min.js"></script>
+<script src="jquery.easings.min.js"></script>
+
+<script type="text/javascript" src="jquery.fullPage.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+        $('#fullpage').fullpage({
+sectionsColor: ['#1bbc9b', '#4BBFC3', '#7BAABE', 'whitesmoke', '#ccddff'],
+anchors: ['firstPage', 'secondPage', '3rdPage', '4thpage', 'lastPage'],
+menu: '#menu',
+css3: true,
+scrollingSpeed: 1000
+});
+
+        $('#showExamples').click(function(e){
+            e.stopPropagation();
+            e.preventDefault();
+            $('#examplesList').toggle();
+            });
+
+        $('html').click(function(){
+            $('#examplesList').hide();
+            });
+        });
+</script>
+
+</head>
+<body>
+<a href="https://github.com/90arther/youmi-gitlab-preview-img"><img style="position: fixed;z-index:99; top: 0; right: 0; border: 0;" src="img/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+
+<ul id="menu">
+    <li data-menuanchor="firstPage" class="active"><a href="#firstPage">简介</a></li>
+    <li data-menuanchor="secondPage"><a href="#secondPage">背景</a></li>
+    <li data-menuanchor="3rdPage"><a href="#3rdPage">如何使用</a></li>
+    <li data-menuanchor="4thpage"><a href="#4thpage">下载</a></li>
+</ul>
+
+<div id="fullpage">
+
+    <div class="section active" id="section0">
+        <h1>Youmi-gitlab-preview-img</h1>
+        <div id="download"><a href="/youmi-gitlab-preview-img/youmi-gitlab-preview-img.crx">Download</a></div><br />
+    </div>
+
+    <div class="section" id="section1">
+        <div class="intro">
+            <h1>一次参与后端分享</h1>
+            <p>听肥叔跟小白他们说, 在gitlab上, 小伙伴开Issue,点开图片想浏览一下, 都会变成下载, 久而久之, 下载文件夹就变成这样. </p>
+            <img src="img/Screenshot2.png" alt="example" width="694" />
+        </div>
+    </div>
+    <div class="section" id="section2">
+        <div class="slide active">
+            <div class="intro">
+                <h1>开始</h1>
+                <p>于是乎, 就有了这个chrome插件, 让大家可以预览图片. </p>
+                <img src="img/Screenshot3.png" alt="slider" width="662" />
+                <p>点击右边的下一页开始</p>
+            </div>
+
+        </div>
+        <div class="slide">
+            <div class="intro">
+                <h1>第一步准备好chrome浏览器</h1>
+                <img src="img/1.png" alt="simple" width="899" />
+                <p>点击上图中的Setting.</p>
+            </div>
+        </div>
+        <div class="slide">
+            <div class="intro">
+                <h1>第二步</h1>
+                <img src="img/2.png" alt="simple" width="312" />
+                <p>点击扩展程序</p>
+            </div>
+        </div>
+        <div class="slide">
+            <div class="intro">
+                <h1>第三步</h1>
+                <img src="img/3.png" alt="simple" width="877" />
+                <p>把插件拉进去, 点击确认添加就可以了.</p>
+            </div>
+        </div>
+        <div class="slide">
+            <div class="intro">
+                <h1>第四步</h1>
+                <img src="img/4.png" alt="simple" width="877" />
+                <p>进到gitlab的Issues里面就可以看到一个按钮, 点开就可以预览图片.</p>
+            </div>
+        </div>
+        <div class="slide">
+            <div class="intro">
+                <h1>第五步</h1>
+                <img src="img/5.png" alt="simple" width="877" />
+                <p>为方便预览,图片都是按原尺寸显示, 鼠标点住图片可以拖动看效果, 右上角一个按钮可以关闭预览窗口.</p>
+            </div>
+        </div>
+        <div class="slide">
+            <div class="intro">
+                <h1>如果您是mac用户</h1>
+                <p>mac下的chrome不能直接安装crx文件, 安装方法: 在右上角有个入口可以把代码fork下来(代码很少, 几乎不占空间), 打开chrome进入扩展程序页面--->选择开发者模式(developer mode)--->点击导入安装程序(load uppaced extension)--->选择项目根目录--> 确定.</p>
+                <p>进入gitlab的comment面板, 刷新一下就可以看到预览按钮.</p>
+            </div>
+        </div>
+    </div>
+    <div class="section" id="section3">
+        <div class="intro">
+            <h1>有需要的小伙伴就下载体验一下吧. </h1>
+            <div id="download"><a href="/youmi-gitlab-preview-img/youmi-gitlab-preview-img.crx">Download</a></div><br />
+            <p>
+            第一版支持预览图片, 年后回来加上PSD等文件的预览功能.
+            <br /><br /><br /><br /><br /><br />
+            </p>
+        </div>
+    </div>
+</div>
+
+<div id="infoMenu" style="display: none;">
+    <ul>
+        <li><a href="https://github.com/alvarotrigo/fullPage.js/archive/master.zip">Download</a></li>
+        <li>
+        <a href="#" id="showExamples">Examples</a>
+        <div id="examplesList">
+            <div class="column">
+                <h3>Navigation</h3>
+                <ul>
+                    <li><a href="examples/scrollBar.html">Scroll Bar Enabled</a></li>
+                    <li><a href="examples/normalScroll.html">Normal scrolling</a></li>
+                    <li><a href="examples/continuous.html">Continuous vertical</a></li>
+                    <li><a href="examples/noAnchor.html">Without anchor links (same URL)</a></li>
+                    <li><a href="examples/navigationV.html">Vertical navigation dots</a></li>
+                    <li><a href="examples/navigationH.html">Horizontal navigation dots</a></li>
+                </ul>
+            </div>
+            <div class="column">
+                <h3>Design</h3>
+                <ul>
+                    <li><a href="examples/backgrounds.html">Full backgrounds</a></li>
+                    <li><a href="examples/videoBackground.html">Full background videos</a></li>
+                    <li><a href="examples/gradientBackgrounds.html">Gradient backgrounds</a></li>
+                    <li><a href="examples/scrolling.html">Scrolling inside sections and slides</a></li>
+                    <li><a href="examples/fixedHeaders.html">Adding fixed header and footer</a></li>
+                    <li><a href="examples/oneSection.html">One single section</a></li>
+                </ul>
+            </div>
+            <div class="column">
+                <h3>Other</h3>
+                <ul>
+                    <li><a href="examples/apple.html">Animations on scrolling</a></li>
+                    <li><a href="examples/methods.html">Functions and methods</a></li>
+                </ul>
+            </div>
+        </div>
+
+        </li>
+        <li><a href="https://github.com/alvarotrigo/fullPage.js#fullpagejs">Documentation</a></li>
+        <li><a href="http://alvarotrigo.com/#contact-page">Contact</a></li>
+    </ul>
+</div>
+
+</body>
+</html>

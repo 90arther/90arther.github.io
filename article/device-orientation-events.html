@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Device-orientation-events</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="90arther">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+    <!-- highlight start -->
+    <link rel="stylesheet" href="/common/highlightjs/zenburn.css">
+    <script src="/common/highlightjs/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <!-- highlight end -->
+
+    <style type="text/css">
+    @media screen and (min-width: 1000px){
+        .wrap{width: 1000px;margin: 0 auto;}
+    }
+    body{background:#eee;}
+    .title{background: #FF801D;width:100%;border-radius: 3px;text-align: center;line-height: 2em;color: #fff;box-shadow: 1px 1px 1px #A6A6A6;}
+    .pre{overflow:scroll;background: #3F3F3F;}
+
+    #guide{ 
+        -webkit-transform:rotate(7deg); /* Opera, Chrome, and Safari */
+        transform:rotate(7deg);
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+        -webkit-border-radius: 50px;
+        -moz-border-radius: 50px;
+        -ms-border-radius: 50px;
+        border-radius: 50px;
+        background: green;
+    }
+    #guide b{
+        position: absolute;
+        display: block;
+        width: 16px;
+        height: 16px;
+        line-heigth: 16px;
+        font-size: 12px;
+        text-align: center;
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        -ms-border-radius: 8px;
+        border-radius: 8px;
+        color: #fff;
+        background: red;
+    }
+    #guide b:nth-last-child(1){right: 0;top: 50%; margin-top: -8px; }
+    #guide b:nth-last-child(2){left: 0;top: 50%; margin-top: -8px;}
+    #guide b:nth-last-child(3){left: 50%; bottom: 0; margin-left: -8px;}
+    #guide b:nth-last-child(4){left: 50%; top: 0; margin-left: -8px;}
+
+    footer a{ color: #33383e; text-decoration: none;}
+    footer a:hover{ color: #ce4c5c;}
+
+    </style>
+
+</head>
+<body>
+<!-- wrap start -->
+<div class="wrap">
+
+    <h1 class="title">Device-orientation-events</h1>
+
+<!-- google search engine -->
+<script src="/common/googlesearch/googlesearch.js" type="text/javascript"></script>
+<gcse:search></gcse:search>
+<!-- google search engine -->
+
+    <p>Please open with your mobile, THX!</p>
+
+    <dt>
+        <dl>alpha:</dl>
+        <dd id="alpha"></dd>
+    </dt>
+    <dt>
+        <dl>beta:</dl>
+        <dd id="beta"></dd>
+    </dt>
+    <dt>
+        <dl>gamma:</dl>
+        <dd id="gamma"></dd>
+    </dt>
+    <div id="guide" style="-webkit-transform:rotate(0deg)">
+        <b>N</b><b>S</b><b>W</b><b>E</b>
+    </div>
+
+<pre class="pre">
+    <code>
+if(window.DeviceOrientationEvent){
+    console.log('your browser is pefer to support DeviceOrientationEvent');
+    window.addEventListener("deviceorientation", findNorth);
+    function getOrientationData(evt){
+        return {
+            'alphaValue': evt.alpha,
+            'betaValue': evt.beta,
+            'gammaValue': evt.gamma
+        }
+    }
+    function showInScreen(data){
+        document.getElementById('alpha').innerHTML = data.alphaValue;
+        document.getElementById('beta').innerHTML = data.betaValue;
+        document.getElementById('gamma').innerHTML = data.gammaValue;
+        document.getElementById('guide').style.cssText = "transform: rotate("+ data.alphaValue + "deg); " + "-webkit-transform: rotate(" + data.alphaValue + "deg)";
+    }
+    function findNorth(evt){
+        var me = evt;
+        showInScreen(getOrientationData(me));
+    }
+}else{
+    document.getElementById('guide').innerHTML = 'you need to update your browser!';
+}
+    </code>
+</pre>
+
+<footer>
+    <h4>Related Links</h4>
+    <p><a href="http://msdn.microsoft.com/en-us/library/ie/dn433240(v=vs.85).aspx" target="_blank">http://msdn.microsoft.com/en-us/library/ie/dn433240(v=vs.85).aspx</a></p>
+    <p><a href="http://www.w3.org/TR/orientation-event/" target="_blank">http://www.w3.org/TR/orientation-event/</a></p>
+    <p><a href="http://www.html5rocks.com/en/tutorials/device/orientation/" target="_blank">http://www.html5rocks.com/en/tutorials/device/orientation/</a></p>
+    <p><a href="https://developer.mozilla.org/en-US/docs/Web/API/DeviceOrientationEvent" target="_blank">https://developer.mozilla.org/en-US/docs/Web/API/DeviceOrientationEvent</a></p>
+</footer>
+</div>
+<!-- wrap end -->
+
+
+<script type="text/javascript">
+if(window.DeviceOrientationEvent){
+    console.log('your browser is pefer to support DeviceOrientationEvent');
+    window.addEventListener("deviceorientation", findNorth);
+    function getOrientationData(evt){
+        return {
+            'alphaValue': evt.alpha,
+            'betaValue': evt.beta,
+            'gammaValue': evt.gamma
+        }
+    }
+    function showInScreen(data){
+        document.getElementById('alpha').innerHTML = data.alphaValue;
+        document.getElementById('beta').innerHTML = data.betaValue;
+        document.getElementById('gamma').innerHTML = data.gammaValue;
+        document.getElementById('guide').style.cssText = "transform: rotate("+ data.alphaValue + "deg); " + "-webkit-transform: rotate(" + data.alphaValue + "deg)";
+    }
+    function findNorth(evt){
+        var me = evt;
+        showInScreen(getOrientationData(me));
+    }
+}else{
+    alert('you need to update your browser!');
+}
+</script>
+
+
+<!-- baidu sitecenter and google-analytics start -->
+<script src="/common/websitestatistic/websitestatistic.js" type="text/javascript"></script>
+<!-- baidu sitecenter and google-analytics end -->
+</body>
+</html>

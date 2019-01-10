@@ -1,0 +1,84 @@
+/*global style star*/
+html{background: #f0f0ed;}
+body { font:bold 100% Calibri,Arial,'微软雅黑'; -webkit-text-size-adjust: none;}
+.hide{display: none;}
+.l{float: left;}
+.r{float: right;}
+.c{clear: both;}
+.green{background-color: #82b964;}
+.red{background-color: #c66;}
+.blue{background-color: #66c9ee;}
+.yellow{background-color: #f4cc13;}
+.ani{transition: all 0.6s;-moz-transition: all 0.6s;/* Firefox 4 */-webkit-transition: all 0.6s;/* Safari 和 Chrome */-o-transition: all 0.6s;	/* Opera */}
+.opa_100{opacity: 1;filter:alpha(opacity=100);-moz-opacity:1;-khtml-opacity: 1;}
+.opa_80{opacity: 0.8;filter:alpha(opacity=80);-moz-opacity:0.8;-khtml-opacity: 0.8;}
+.opa_60{opacity: 0.6;filter:alpha(opacity=60);-moz-opacity:0.6;-khtml-opacity: 0.6;}
+.b_s1{-moz-box-shadow: 3px 2px 2px #000000;-webkit-box-shadow: 3px 2px 2px #000000;box-shadow: 3px 2px 2px #000000;}
+.rotato1{-webkit-transform: rotate(-2deg);-moz-transform: rotate(-2deg);}
+.rotato2{-webkit-transform: rotate(0deg);-moz-transform: rotate(0deg);}
+.rotato3{-webkit-transform: rotate(2deg);-moz-transform: rotate(2deg);}
+.rotato4{-webkit-transform: rotate(4deg);-moz-transform: rotate(4deg);}
+/*global style end*/
+/*header star*/
+.global_head{border-top:7px solid #25272a;background:#33363b;overflow: hidden;}
+.global_head .head_con{width:1140px;padding:0 10px;margin: 0 auto;background:#33363b;}
+.global_head .form{padding-top:5px;height:30px;}
+.global_head label{display: block;float: right;}
+.global_head .search_con{height:12px;padding:9px 5px;width:230px;background: #1c1e20;border:none;color:#fff;}
+.global_head .search_btn{height:30px;line-height:30px;width:45px;background: #131415 url(/img/sprite.png) no-repeat 8px -100px;display: block;float: right;text-indent: -9999px;overflow: hidden;font-color:#fff;}
+.global_head .search_btn:hover{background-color:#74787C;}
+.global_head h1{font-size:2.813em;height:1.75542125844em;line-height:1.75542125844em;text-shadow: 1px 1px 1px rgba(0,0,0,0.75);background: url(/img/logo.png) no-repeat;background-size: 1.75542125844em auto;text-indent: 2em;}
+.global_head .blog{color:#dddddb;}
+.global_head h1 a{color:#fff;text-decoration: none;transition: all 0.6s;-moz-transition: all 0.6s;/* Firefox 4 */-webkit-transition: all 0.6s;/* Safari 和 Chrome */-o-transition: all 0.6s;	/* Opera */}
+.global_head h1 a:hover{color:#4ea6ea;}
+.global_link{height: 3.438em;background: url(/img/nav_bg.jpg) no-repeat bottom left;background-size: auto 0.313em;margin-top:1.625em;}
+.global_link li{float:left;width:15.5%;height:3.125em;background: #fff;border-right:0.188em solid #33363b;}
+.global_link a{display:block;width:100%;height:100%;line-height:2.7777777em;text-align:center;vertical-align:middle;text-decoration: none;font-size:1.125em;color:#333;font-weight: bold;}
+.global_link a{transition: all 0.6s;-moz-transition: all 0.6s;/* Firefox 4 */-webkit-transition: all 0.6s;/* Safari 和 Chrome */-o-transition: all 0.6s;	/* Opera */}
+.global_link a:hover{background: #4ea6ea;color:#fff;}
+.global_link a:active,.global_link a.here{background: #599FD4;;color: #fff;}
+.global_link li.last{background: #ce4c5c;float: right;}
+.global_link li.last a{color:#fff;}
+.global_link li.last a:hover{background:#fff;color: #000;}
+@media screen and (max-width:1160px){
+    .global_head .head_con{width: 96%;}
+}
+@media screen and (max-width:380px){
+    body{font-size: 70%;}
+    .global_head h1{margin-top:1em;}
+}
+/*header end*/
+/*contact_dialog star*/
+.black_bg{position: fixed;width: 100%;height: 100%;left:0;top:0;background-color: #000;}
+.contact_dialog .contact{width:35.5em;padding: 4.125em 2.25em;background: #f0f0ed;position:fixed;_position:absolute;left:50%;top:50%;z-index:9999;margin-left:-20.0315em;margin-top:-10em;_position:absolute;}
+.contact_dialog .photo{width:11.375em;height:11.375em;}
+.contact_dialog .mes{width: 22.625em;color: #333;padding-top: 1em;font-weight: bold;overflow: hidden;}
+.contact_dialog .head{display: block;float: left;width:5em;clear: right;}
+.contact_dialog a{text-decoration: none;color:#333;}
+.contact_dialog a:hover{color:#fe7d36;}
+.contact_dialog .dialog_mes{clear: both;}
+.contact_dialog label{display: block;}
+.contact_dialog input{display: block;font-size:1em;width:34em;background: #313131;border:none;margin: 0.2em 0 0.7em;color:#fff;padding:0.3em;}
+.contact_dialog textarea{display: block;font-size:1em;width:34em;height:12em;background: #313131;border:none;margin: 0.2em 0 0.7em;color:#fff;padding:0.3em;}
+.contact_dialog .update{font-size:1.3em;text-decoration:none;padding: 0.3em 2em;background: #94cce1;color:#fff;}
+.contact_dialog .update:hover{background: #5EC6EC;}
+.contact_dialog .close{position: absolute;right:0;background-color:#919191;color:#fff;top:0;font-size: 4em;width: 1em;height: 1em;line-height: 1em;text-align: center;text-decoration: none;}
+.contact_dialog .close:hover{background:#666;}
+/*contact_dialog end*/
+/*share star*/
+.share{height:42px;margin:1em 1.5em 3em;overflow: hidden;}
+.share a{display: block;width:42px;height:42px;float:left;background: url(/img/sprite.png) no-repeat;margin-right: 0.375em;}
+.share a.n1{background-position: 0 0;}
+.share a.n2{background-position: -48px 0;}
+.share a.n3{background-position: -96px 0;}
+.share a.n4{background-position: -144px 0;}
+.share a.n5{background-position: -192px 0;}
+.share a.n6{background-position: -240px 0;}
+.share a:hover{background: url(/img/sprite.png) no-repeat;transition: all 0.6s;-moz-transition: all 0.6s;/* Firefox 4 */-webkit-transition: all 0.6s;/* Safari 和 Chrome */-o-transition: all 0.6s;	/* Opera */}
+.share a.n1:hover{background-position: 0 -50px;}
+.share a.n2:hover{background-position: -48px -50px;}
+.share a.n3:hover{background-position: -96px -50px;}
+.share a.n4:hover{background-position: -144px -50px;}
+.share a.n5:hover{background-position: -192px -50px;}
+.share a.n6:hover{background-position: -240px -50px;}
+/*share end*/
