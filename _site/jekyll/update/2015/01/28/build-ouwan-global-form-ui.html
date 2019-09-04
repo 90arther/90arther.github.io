@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="baidu-site-verification" content="jkKY19BOjl" />
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="author" content="90Arther"/>
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>build www.ouwan.com global form element</title>
+    <meta name="keywords" content=""/>
+    <meta name="description" content="Hi,This is Arther. If you are the phone company, I already sent the money. If you are a female, don't worry, I have plenty of money.
+">
+
+    <!--[if IE]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link rel="shortcut icon" href="/img/logo.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="/css/global.css"/>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/jekyll/update/2015/01/28/build-ouwan-global-form-ui.html">
+    <script src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-3.min.js" data-apikey="bc0f4dfdf25b2060af223b9303832152"></script>
+</head>
+
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">90Arther</a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">About</a>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/posts/">Posts</a>
+          
+        
+          
+          <a class="page-link" href="/recommend/">Recommend</a>
+          
+        
+          
+          <a class="page-link" href="/works/">works</a>
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <link rel="stylesheet" href="/css/monokai-sublime.css">
+<script type="text/javascript" src="/js/highlight.pack.js"></script>
+<div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">build www.ouwan.com global form element</h1>
+    <p class="post-meta">Jan 28, 2015</p>
+  </header>
+
+  <article class="post-content" style="word-wrap: break-word;">
+    <style type="text/css">
+@charset "UTF-8";
+/*
+ * owan-web version 2.0
+ * Author: caiweiguo@youmi.net OR 90arther@gmail.com
+ * Instruction: /docs/front-end.rm
+ * constructor: global: css style
+ *                      atom css
+ *                      form
+ *                      button
+ *                      fluid grid system
+ ***************************************************************/
+
+
+/*
+ * =css style
+ ***************************************************************/
+body{font:12px/1.7 "Microsoft YaHei","微软雅黑",simSun,Arial;color:#616161;background: #fafafa;}
+
+/*
+ * =atom css
+ ***************************************************************/
+/*文字排版*/
+.f0{font-size:0;}
+.f12{font-size:12px}
+.f13{font-size:13px}
+.f14{font-size:14px}
+.f16{font-size:16px}
+.f20{font-size:20px}
+.f24{font-size:24px}
+.f26{font-size:26px}
+.f28{font-size:28px}
+.f30{font-size:30px}
+.f32{font-size:32px}
+.f36{font-size:36px}
+.fb{font-weight:bold}
+.fn{font-weight:normal}
+.t2{text-indent:2em}
+.lh100{line-height:100%}
+.lh150{line-height:150%}
+.lh180{line-height:180%}
+.lh200{line-height:200%}
+.lh240{line-height:240%}
+.unl{text-decoration:underline;}
+.no_unl{text-decoration:none;}
+
+/*定位*/
+.tl{text-align:left}
+.tc{text-align:center}
+.tr{text-align:right}
+.bc{margin-left:auto;margin-right:auto;}
+.fl{float:left;display:inline;}
+.fr{float:right;display:inline;}
+.cb{clear:both}
+.cl{clear:left}
+.cr{clear:right}
+.clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden}
+.clearfix{display:inline-block}* html .clearfix{height:1%}.clearfix{display:block}
+.vm{vertical-align:middle}
+.pr{position:relative}
+.pa{position:absolute}
+.abs-right{position:absolute;right:0}
+.abs-topright{position:absolute;right:0;top:0}
+.zoom{zoom:1}
+.hidden{visibility:hidden}
+.none{display:none !important;}
+.overflowh{overflow: hidden;}
+.db{display:block}
+
+/*长度高度*/
+.w10{width:10px}
+.w20{width:20px}
+.w30{width:30px}
+.w40{width:40px}
+.w50{width:50px}
+.w60{width:60px}
+.w70{width:70px}
+.w80{width:80px}
+.w90{width:90px}
+.w100{width:100px}
+.w128{width:128px}
+.w200{width:200px}
+.w250{width:250px}
+.w300{width:300px}
+.w400{width:400px}
+.w500{width:500px}
+.w600{width:600px}
+.w700{width:700px}
+.w800{width:800px}
+.w{width:100%}
+.h30{height:30px}
+.h50{height:50px}
+.h80{height:80px}
+.h100{height:100px}
+.h128{height:128px}
+.h200{height:200px}
+.h300{height:300px}
+.h400{height:400px}
+.h{height:100%}
+
+/*边距*/
+.m8{margin:10px}
+.m10{margin:10px}
+.m15{margin:15px}
+.m20{margin:20px}
+.m30{margin:30px}
+.m40{margin:40px}
+.mt5{margin-top:5px}
+.mt10{margin-top:10px}
+.mt15{margin-top:15px}
+.mt20{margin-top:20px}
+.mt30{margin-top:30px}
+.mt35{margin-top:35px}
+.mt40{margin-top:40px}
+.mt50{margin-top:50px}
+.mt60{margin-top:60px}
+.mt100{margin-top:100px}
+.mb10{margin-bottom:10px}
+.mb15{margin-bottom:15px}
+.mb20{margin-bottom:20px}
+.mb30{margin-bottom:30px}
+.mb50{margin-bottom:50px}
+.mb100{margin-bottom:100px}
+.ml5{margin-left:5px}
+.ml10{margin-left:10px}
+.ml15{margin-left:15px}
+.ml20{margin-left:20px}
+.ml30{margin-left:30px}
+.ml35{margin-left:35px}
+.ml50{margin-left:50px}
+.ml80{margin-left:80px}
+.ml100{margin-left:100px}
+.ml110{margin-left:110px}
+.ml150{margin-left:150px}
+.mr5{margin-right:5px}
+.mr10{margin-right:10px}
+.mr15{margin-right:15px}
+.mr20{margin-right:20px}
+.mr30{margin-right:30px}
+.mr50{margin-right:50px}
+.mr80{margin-right:80px}
+.mr100{margin-right:100px}
+
+/*内边距*/
+.p10{padding:10px;}
+.p15{padding:15px;}
+.p20{padding:20px;}
+.p30{padding:30px;}
+.p50{padding:50px;}
+.pt5{padding-top:5px}
+.pt10{padding-top:10px}
+.pt15{padding-top:15px}
+.pt20{padding-top:20px}
+.pt30{padding-top:30px}
+.pt40{padding-top:40px}
+.pt50{padding-top:50px}
+.pt60{padding-top:60px}
+.pb5{padding-bottom:5px}
+.pb10{padding-bottom:10px}
+.pb15{padding-bottom:15px}
+.pb20{padding-bottom:20px}
+.pb30{padding-bottom:30px}
+.pb40{padding-bottom:40px}
+.pb50{padding-bottom:50px}
+.pb100{padding-bottom:100px}
+.pl5{padding-left:5px}
+.pl10{padding-left:10px}
+.pl15{padding-left:15px}
+.pl20{padding-left:20px}
+.pl25{padding-left:25px}
+.pl30{padding-left:30px}
+.pl40{padding-left:40px}
+.pl50{padding-left:50px}
+.pl100{padding-left:100px}
+.pr5{padding-right:5px}
+.pr10{padding-right:10px}
+.pr15{padding-right:15px}
+.pr20{padding-right:20px}
+.pr30{padding-right:30px}
+.pr50{padding-right:50px}
+.pr100{padding-right:100px}
+
+
+/*
+ * =form
+ * |- base style
+ * |- Inline form
+ * |- Horizontal form
+ * |- Control sizing
+ */
+.form-group {
+    margin-bottom: 15px;
+}
+.form-label {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: normal;
+    cursor: pointer;
+}
+.form-control {
+    display: block;
+    margin-bottom: 10px;
+    padding: 2px 0;
+    width: 100%;
+    height: 30px;
+    font-size: 14px;
+    text-indent: 1em;
+    line-height: 20px;
+    color: #3f3f3f;
+    vertical-align: middle;
+    background-color: #fff;
+    border: 1px solid #d3d3d3;
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+.form-checkbox,
+.form-radio {
+    position: relative;
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.form-checkbox label,
+.form-radio label {
+    min-height: 20px;
+    padding-left: 20px;
+    margin-bottom: 0;
+    font-weight: 400;
+    cursor: pointer;
+}
+.form-checkbox input[type=checkbox],
+.form-checkbox-inline input[type=checkbox],
+.form-radio input[type=radio],
+.form-radio-inline input[type=radio] {
+    position: absolute;
+    margin: 4px 0 0;
+    margin-top: 4px \9;
+    margin-left: -20px;
+    line-height: normal;
+}
+.form-help-block {
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    color: #737373;
+}
+.form-control-static {
+    padding-top: 7px;
+    padding-bottom: 7px;
+    margin-bottom: 0;
+}
+/* =Inline form
+ */
+.form-inline .form-group {
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+.form-inline .form-control {
+    display: inline-block;
+    width: auto;
+    vertical-align: middle;
+    margin: 5px 0;
+}
+.form-sr-only {
+    display: none;
+}
+.form-inline .form-checkbox,
+.form-inline .form-radio {
+    display: inline-block;
+    margin-top: 0;
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+.form-checkbox-inline,
+.form-radio-inline {
+    display: inline-block;
+    margin: auto 10px 0 auto;
+    padding-left: 20px;
+    font-weight: 400;
+    vertical-align: middle;
+    cursor: pointer;
+}
+/*
+ * =Horizontal form
+ */
+.form-horizontal .form-label {
+    padding-top: 7px;
+    margin-bottom: 0;
+    text-align: right;
+}
+
+/*
+ * =Control Size
+ */
+.form-control-lg {
+    height: 46px;
+    padding: 10px 0;
+    font-size: 18px;
+    line-height: 1.3333333;
+}
+select.form-control-lg {
+    height: 46px;
+    line-height: 46px;
+}
+.form-control-sm {
+    height: 30px;
+    padding: 5px 0;
+    font-size: 12px;
+    line-height: 1.5;
+}
+select.form-control-sm {
+    height: 30px;
+    line-height: 30px;
+}
+/*
+ * =button
+ * |- btn
+ * |- style
+ *      |- btn-style1
+ *      |- btn-style2
+ *      |- btn-style3
+ *      |- btn-style4
+ *      |- btn-style5
+ *      |- ...
+ * |- status
+ *      |- active
+ *      |- disabled
+ * |- size
+ *      |- btn-xl
+ *      |- btn-lg
+ *      |- btn-sm
+ *      |- btn-xs
+ * |- animation
+ *      |- action
+ ********************************************/
+.btn {
+    display: inline-block;
+    padding: 6px 16px;
+    margin-bottom: 0;
+    width: auto;
+    height: auto;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    -ms-transition: all .5s;
+    -o-transition: all .5s;
+    -moz-transition: all .5s;
+    -webkit-transition: all .5s;
+    transition: all .5s;
+}
+/*
+ * =button style
+ ********************************************/
+.btn-style1 {
+    background-color: #9cdbff;
+    border: 1px solid #0077bb;
+    color: #0077bb;
+}
+.btn-style1:hover,
+.btn-style1:active,
+.btn-style1.active {
+    background-color: #0093e8;
+    border: 1px solid #0077bb;
+    color: #fff;
+}
+.btn-style2 {
+    background-color: #fff;
+    border: 1px solid #d4d4d4;
+    color: #3f3f3f;
+}
+.btn-style2:hover,
+.btn-style2:active,
+.btn-style2.active {
+    background-color: #00a2ff;
+    border: 1px solid #0077bb;
+    color: #fff;
+}
+.btn-style3 {
+    background-color: #fff;
+    border: 1px solid #d4d4d4;
+    color: #3f3f3f;
+}
+.btn-style3:hover,
+.btn-style3:active,
+.btn-style3.active {
+    background-color: #20ca90;
+    border: 1px solid #0fb47c;
+    color: #fff;
+}
+.btn-style4 {
+    background-color: #fff;
+    border: 1px solid #d4d4d4;
+    color: #3f3f3f;
+}
+.btn-style4:hover,
+.btn-style4:active,
+.btn-style4.active {
+    background-color: #ff8711;
+    border: 1px solid #da730e;
+    color: #fff;
+}
+.btn-style5 {
+    background-color: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+}
+.btn-style5:hover,
+.btn-style5:active,
+.btn-style5.active {
+    background-color: #0093e8;
+    border: 1px solid #0077bb;
+    color: #fff;
+}
+.btn-style6 {
+    background-color: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+}
+.btn-style6:hover,
+.btn-style6:active,
+.btn-style6.active {
+    background-color: #0ab078;
+    border: 1px solid #08a26e;
+    color: #fff;
+}
+.btn-style7 {
+    background-color: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+}
+.btn-style7:hover,
+.btn-style7:active,
+.btn-style7.active {
+    background-color: #ee7e35;
+    border: 1px solid #d86d27;
+    color: #fff;
+}
+.btn-style8 {
+    background-color: #00a2ff;
+    border: 1px solid #0077bb;
+    color: #fff;
+}
+.btn-style8:hover,
+.btn-style8:active,
+.btn-style8.active {
+    background-color: #0093e8;
+    border: 1px solid #0077bb;
+    color: #fff;
+}
+.btn-style9 {
+    background-color: #20ca90;
+    border: 1px solid #0fb47c;
+    color: #fff;
+}
+.btn-style9:hover,
+.btn-style9:active,
+.btn-style9.active {
+    background-color: #0ab078;
+    border: 1px solid #08a26e;
+    color: #fff;
+}
+.btn-style10 {
+    background-color: #ff8711;
+    border: 1px solid #da730e;
+    color: #fff;
+}
+.btn-style10:hover,
+.btn-style10:active,
+.btn-style10.active {
+    background-color: #ee7e35;
+    border: 1px solid #e4732a;
+    color: #fff;
+}
+.btn-style11 {
+    background-color: #fff;
+    border: 1px solid transparent;
+    color: #3f3f3f;
+}
+.btn-style11:hover,
+.btn-style11:active,
+.btn-style11.active {
+    background-color: #00a2ff;
+    border: 1px solid transparent
+    color: #fff;
+}
+.btn-style12 {
+    background-color: #00a2ff;
+    border: 1px solid transparent;
+    color: #fff;
+}
+.btn-style12:hover,
+.btn-style12:active,
+.btn-style12.active {
+    background-color: #0093e8;
+    border: 1px solid transparent;
+    color: #fff;
+}
+/* =button size
+ ********************************************/
+.btn-xl {
+    padding: 10px 36px;
+    font-size: 18px;
+    line-height: 1.33;
+}
+.btn-lg {
+    padding: 10px 16px;
+    font-size: 18px;
+    line-height: 1.33;
+}
+.btn-sm {
+    padding: 5px 14px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+.btn-xs {
+    padding: 1px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+.btn-block {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+}
+
+/*
+ * old button
+ */
+.btn-primary {
+    display: block;
+    color: #0077bb;
+    background: #9cdbff;
+    border: 1px solid #0077bb;
+    -ms-transition: all .5s;
+    -o-transition: all .5s;
+    -moz-transition: all .5s;
+    -webkit-transition: all .5s;
+    transition: all .5s;
+}
+.btn-primary:hover {
+    cursor: pointer;
+    text-decoration: none !important;
+    color: #fff;
+    background: #0093e8;
+    border: 1px solid #0077bb;
+}
+.btn-success {
+    display: block;
+    color: #fff;
+    background: #20ca90;
+    border: 1px solid #0fb47c;
+    -ms-transition: all .5s;
+    -o-transition: all .5s;
+    -moz-transition: all .5s;
+    -webkit-transition: all .5s;
+    transition: all .5s;
+}
+.btn-success:hover {
+    cursor: pointer;
+    color: #fff;
+    background: #12bd83;
+}
+.btn-unavaible {
+    display: block;
+    text-decoration: none;
+    color: #000;
+    background-color: #ccc;
+}
+.btn-primary1 {
+    display: block;
+    text-decoration: none;
+    color: #fff;
+    background: #00a2ff;
+    -ms-transition: all .5s;
+    -o-transition: all .5s;
+    -moz-transition: all .5s;
+    -webkit-transition: all .5s;
+    transition: all .5s;
+}
+.btn-primary1:hover {
+    cursor: pointer;
+    background: #0090E2;
+}
+.btn-white {
+    display: block;
+    text-decoration: none;
+    color: #000;
+    background: #fff;
+    border: 1px solid #d8d8d8;
+        -ms-transition: all .5s;
+         -o-transition: all .5s;
+       -moz-transition: all .5s;
+    -webkit-transition: all .5s;
+            transition: all .5s;
+}
+.btn-white:hover {
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+    color: #fff;
+    background-color: #01a1ff;
+    border: 1px solid #0276bf;
+}
+.btn-white-blue2 {
+    display: block;
+    text-decoration: none;
+    text-align: center;
+    color: #3f3f3f;
+    border: 1px solid #a2a2a2;
+    background: transparent;
+        -ms-transition: all .5s;
+         -o-transition: all .5s;
+       -moz-transition: all .5s;
+    -webkit-transition: all .5s;
+            transition: all .5s;
+}
+.btn-white-blue2:hover{
+    cursor: pointer;
+    text-decoration: none !important;
+    color: #fff;
+    background-color: #0090e2;
+    border: 1px solid #0086d2;
+}
+.btn-orange {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    border: 1px solid #da730e;
+    background: #ff9956;
+        -ms-transition: all .5s;
+         -o-transition: all .5s;
+       -moz-transition: all .5s;
+    -webkit-transition: all .5s;
+            transition: all .5s;
+}
+.btn-orange:hover {
+    cursor: pointer;
+    text-decoration: none !important;
+}
+/*
+ * =fluid grid system
+ */
+.row-fluid {
+  width: 100%;
+  *zoom: 1;
+}
+
+.row-fluid:before,
+.row-fluid:after {
+  display: table;
+  line-height: 0;
+  content: "";
+}
+
+.row-fluid:after {
+  clear: both;
+}
+
+.row-fluid [class*="span"] {
+  display: block;
+  float: left;
+  width: 100%;
+  min-height: 30px;
+  margin-left: 2.127659574468085%;
+  *margin-left: 2.074468085106383%;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.row-fluid [class*="span"]:first-child {
+  margin-left: 0;
+}
+
+.row-fluid .controls-row [class*="span"] + [class*="span"] {
+  margin-left: 2.127659574468085%;
+}
+
+.row-fluid .span12 {
+  width: 100%;
+  *width: 99.94680851063829%;
+}
+
+.row-fluid .span11 {
+  width: 91.48936170212765%;
+  *width: 91.43617021276594%;
+}
+
+.row-fluid .span10 {
+  width: 82.97872340425532%;
+  *width: 82.92553191489361%;
+}
+
+.row-fluid .span9 {
+  width: 74.46808510638297%;
+  *width: 74.41489361702126%;
+}
+
+.row-fluid .span8 {
+  width: 65.95744680851064%;
+  *width: 65.90425531914893%;
+}
+
+.row-fluid .span7 {
+  width: 57.44680851063829%;
+  *width: 57.39361702127659%;
+}
+
+.row-fluid .span6 {
+  width: 48.93617021276595%;
+  *width: 48.88297872340425%;
+}
+
+.row-fluid .span5 {
+  width: 40.42553191489362%;
+  *width: 40.37234042553192%;
+}
+
+.row-fluid .span4 {
+  width: 31.914893617021278%;
+  *width: 31.861702127659576%;
+}
+
+.row-fluid .span3 {
+  width: 23.404255319148934%;
+  *width: 23.351063829787233%;
+}
+
+.row-fluid .span2 {
+  width: 14.893617021276595%;
+  *width: 14.840425531914894%;
+}
+
+.row-fluid .span1 {
+  width: 6.382978723404255%;
+  *width: 6.329787234042553%;
+}
+
+.row-fluid .offset12 {
+  margin-left: 104.25531914893617%;
+  *margin-left: 104.14893617021275%;
+}
+
+.row-fluid .offset12:first-child {
+  margin-left: 102.12765957446808%;
+  *margin-left: 102.02127659574467%;
+}
+
+.row-fluid .offset11 {
+  margin-left: 95.74468085106382%;
+  *margin-left: 95.6382978723404%;
+}
+
+.row-fluid .offset11:first-child {
+  margin-left: 93.61702127659574%;
+  *margin-left: 93.51063829787232%;
+}
+
+.row-fluid .offset10 {
+  margin-left: 87.23404255319149%;
+  *margin-left: 87.12765957446807%;
+}
+
+.row-fluid .offset10:first-child {
+  margin-left: 85.1063829787234%;
+  *margin-left: 84.99999999999999%;
+}
+
+.row-fluid .offset9 {
+  margin-left: 78.72340425531914%;
+  *margin-left: 78.61702127659572%;
+}
+
+.row-fluid .offset9:first-child {
+  margin-left: 76.59574468085106%;
+  *margin-left: 76.48936170212764%;
+}
+
+.row-fluid .offset8 {
+  margin-left: 70.2127659574468%;
+  *margin-left: 70.10638297872339%;
+}
+
+.row-fluid .offset8:first-child {
+  margin-left: 68.08510638297872%;
+  *margin-left: 67.9787234042553%;
+}
+
+.row-fluid .offset7 {
+  margin-left: 61.70212765957446%;
+  *margin-left: 61.59574468085106%;
+}
+
+.row-fluid .offset7:first-child {
+  margin-left: 59.574468085106375%;
+  *margin-left: 59.46808510638297%;
+}
+
+.row-fluid .offset6 {
+  margin-left: 53.191489361702125%;
+  *margin-left: 53.085106382978715%;
+}
+
+.row-fluid .offset6:first-child {
+  margin-left: 51.063829787234035%;
+  *margin-left: 50.95744680851063%;
+}
+
+.row-fluid .offset5 {
+  margin-left: 44.68085106382979%;
+  *margin-left: 44.57446808510638%;
+}
+
+.row-fluid .offset5:first-child {
+  margin-left: 42.5531914893617%;
+  *margin-left: 42.4468085106383%;
+}
+
+.row-fluid .offset4 {
+  margin-left: 36.170212765957444%;
+  *margin-left: 36.06382978723405%;
+}
+
+.row-fluid .offset4:first-child {
+  margin-left: 34.04255319148936%;
+  *margin-left: 33.93617021276596%;
+}
+
+.row-fluid .offset3 {
+  margin-left: 27.659574468085104%;
+  *margin-left: 27.5531914893617%;
+}
+
+.row-fluid .offset3:first-child {
+  margin-left: 25.53191489361702%;
+  *margin-left: 25.425531914893618%;
+}
+
+.row-fluid .offset2 {
+  margin-left: 19.148936170212764%;
+  *margin-left: 19.04255319148936%;
+}
+
+.row-fluid .offset2:first-child {
+  margin-left: 17.02127659574468%;
+  *margin-left: 16.914893617021278%;
+}
+
+.row-fluid .offset1 {
+  margin-left: 10.638297872340425%;
+  *margin-left: 10.53191489361702%;
+}
+
+.row-fluid .offset1:first-child {
+  margin-left: 8.51063829787234%;
+  *margin-left: 8.404255319148938%;
+}
+</style>
+
+<!-- Basic Example -->
+<form>
+    <fieldset>
+        <legend class="p30 f18 font-bold font-blue tc">基本用法</legend>
+        <div class="form-group">
+            <label class="form-label" for="exampleInputEmail1">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email" />
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="exampleInputPassword1">Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" />
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="exampleInputFile">File input</label>
+            <input type="file" id="exampleInputFile" />
+            <p class="form-help-block">Example block-level help text here.</p>
+        </div>
+        <div class="form-checkbox">
+            <label>
+                <input type="checkbox" /> Check me out
+            </label>
+        </div>
+        <div class="form-radio">
+            <label>
+                <input type="radio" /> Check me out
+            </label>
+        </div>
+        <div class="checkbox">
+            <label class="form-label">
+                <input type="checkbox" value="" />
+                Option one is this and that&mdash;be sure to include why it's great
+            </label>
+        </div>
+        <div class="checkbox disabled">
+            <label class="form-label">
+                <input type="checkbox" value="" disabled="" />
+                Option two is disabled
+            </label>
+        </div>
+
+        <div class="radio">
+            <label class="form-label">
+                <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="" />
+                Option one is this and that&mdash;be sure to include why it's great
+            </label>
+        </div>
+        <div class="radio">
+            <label class="form-label">
+                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" />
+                Option two can be something else and selecting it will deselect option one
+            </label>
+        </div>
+        <div class="radio disabled">
+            <label class="form-label">
+                <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" disabled="" />
+                Option three is disabled
+            </label>
+        </div>
+        <input class="btn btn-style8 btn-xl" type="submit" value="submit" />
+        <input class="btn btn-style8 btn-lg" type="submit" value="submit" />
+        <input class="btn btn-style8" type="submit" value="submit" />
+        <input class="btn btn-style8 btn-sm" type="submit" value="submit" />
+    </fieldset>
+</form>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form&gt;</span>
+    <span class="nt">&lt;fieldset&gt;</span>
+        <span class="nt">&lt;legend</span> <span class="na">class=</span><span class="s">"p30 f18 font-bold font-blue tc"</span><span class="nt">&gt;</span>基本用法<span class="nt">&lt;/legend&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-group"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-label"</span> <span class="na">for=</span><span class="s">"exampleInputEmail1"</span><span class="nt">&gt;</span>Email address<span class="nt">&lt;/label&gt;</span>
+            <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"email"</span> <span class="na">class=</span><span class="s">"form-control"</span> <span class="na">id=</span><span class="s">"exampleInputEmail1"</span> <span class="na">placeholder=</span><span class="s">"Enter email"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-group"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-label"</span> <span class="na">for=</span><span class="s">"exampleInputPassword1"</span><span class="nt">&gt;</span>Password<span class="nt">&lt;/label&gt;</span>
+            <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"password"</span> <span class="na">class=</span><span class="s">"form-control"</span> <span class="na">id=</span><span class="s">"exampleInputPassword1"</span> <span class="na">placeholder=</span><span class="s">"Password"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-group"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-label"</span> <span class="na">for=</span><span class="s">"exampleInputFile"</span><span class="nt">&gt;</span>File input<span class="nt">&lt;/label&gt;</span>
+            <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"file"</span> <span class="na">id=</span><span class="s">"exampleInputFile"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;p</span> <span class="na">class=</span><span class="s">"form-help-block"</span><span class="nt">&gt;</span>Example block-level help text here.<span class="nt">&lt;/p&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-checkbox"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"checkbox"</span><span class="nt">&gt;</span> Check me out
+            <span class="nt">&lt;/label&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-radio"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"radio"</span><span class="nt">&gt;</span> Check me out
+            <span class="nt">&lt;/label&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"checkbox"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-label"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"checkbox"</span> <span class="na">value=</span><span class="s">""</span><span class="nt">&gt;</span>
+                Option one is this and that<span class="ni">&amp;mdash;</span>be sure to include why it's great
+            <span class="nt">&lt;/label&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"checkbox disabled"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-label"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"checkbox"</span> <span class="na">value=</span><span class="s">""</span> <span class="na">disabled</span><span class="nt">&gt;</span>
+                Option two is disabled
+            <span class="nt">&lt;/label&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"radio"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-label"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"radio"</span> <span class="na">name=</span><span class="s">"optionsRadios"</span> <span class="na">id=</span><span class="s">"optionsRadios1"</span> <span class="na">value=</span><span class="s">"option1"</span> <span class="na">checked</span><span class="nt">&gt;</span>
+                Option one is this and that<span class="ni">&amp;mdash;</span>be sure to include why it's great
+            <span class="nt">&lt;/label&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"radio"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-label"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"radio"</span> <span class="na">name=</span><span class="s">"optionsRadios"</span> <span class="na">id=</span><span class="s">"optionsRadios2"</span> <span class="na">value=</span><span class="s">"option2"</span><span class="nt">&gt;</span>
+                Option two can be something else and selecting it will deselect option one
+            <span class="nt">&lt;/label&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"radio disabled"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-label"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"radio"</span> <span class="na">name=</span><span class="s">"optionsRadios"</span> <span class="na">id=</span><span class="s">"optionsRadios3"</span> <span class="na">value=</span><span class="s">"option3"</span> <span class="na">disabled</span><span class="nt">&gt;</span>
+                Option three is disabled
+            <span class="nt">&lt;/label&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;input</span> <span class="na">class=</span><span class="s">"btn btn-style8 btn-xl"</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"submit"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;input</span> <span class="na">class=</span><span class="s">"btn btn-style8 btn-lg"</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"submit"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;input</span> <span class="na">class=</span><span class="s">"btn btn-style8"</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"submit"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;input</span> <span class="na">class=</span><span class="s">"btn btn-style8 btn-sm"</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"submit"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/fieldset&gt;</span>
+<span class="nt">&lt;/form&gt;</span></code></pre></figure>
+
+<form class="form-inline">
+    <fieldset>
+        <legend class="p30 f18 font-bold font-blue tc">行内显示</legend>
+        <div class="form-group">
+            <label class="form-label" for="exampleInputName2">Name</label>
+            <input type="text" class="form-control" id="exampleInputName2" placeholder="Jane Doe" />
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="exampleInputEmail2">Email</label>
+            <input type="email" class="form-control" id="exampleInputEmail2" placeholder="jane.doe@example.com" />
+        </div>
+        <input class="btn btn-style8 " type="submit" value="submit" />
+    </fieldset>
+</form>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="na">class=</span><span class="s">"form-inline"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;fieldset&gt;</span>
+        <span class="nt">&lt;legend</span> <span class="na">class=</span><span class="s">"p30 f18 font-bold font-blue tc"</span><span class="nt">&gt;</span>行内显示<span class="nt">&lt;/legend&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-group"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-label"</span> <span class="na">for=</span><span class="s">"exampleInputName2"</span><span class="nt">&gt;</span>Name<span class="nt">&lt;/label&gt;</span>
+            <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">class=</span><span class="s">"form-control"</span> <span class="na">id=</span><span class="s">"exampleInputName2"</span> <span class="na">placeholder=</span><span class="s">"Jane Doe"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-group"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-label"</span> <span class="na">for=</span><span class="s">"exampleInputEmail2"</span><span class="nt">&gt;</span>Email<span class="nt">&lt;/label&gt;</span>
+            <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"email"</span> <span class="na">class=</span><span class="s">"form-control"</span> <span class="na">id=</span><span class="s">"exampleInputEmail2"</span> <span class="na">placeholder=</span><span class="s">"jane.doe@example.com"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;input</span> <span class="na">class=</span><span class="s">"btn btn-style8 "</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"submit"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/fieldset&gt;</span>
+<span class="nt">&lt;/form&gt;</span></code></pre></figure>
+
+<form class="form-inline">
+    <fieldset>
+        <legend class="p30 f18 font-bold font-blue tc">隐藏输入框标签Label</legend>
+        <div class="form-group">
+            <label class="form-sr-only" for="exampleInputEmail3">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail3" placeholder="Enter email" />
+        </div>
+        <div class="form-group">
+            <label class="form-sr-only" for="exampleInputPassword3">Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword3" placeholder="Password" />
+        </div>
+        <div class="form-checkbox">
+            <label>
+                <input type="checkbox" /> Remember me
+            </label>
+        </div>
+        <input class="btn btn-style8 " type="submit" value="submit" />
+    </fieldset>
+</form>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="na">class=</span><span class="s">"form-inline"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;fieldset&gt;</span>
+        <span class="nt">&lt;legend</span> <span class="na">class=</span><span class="s">"p30 f18 font-bold font-blue tc"</span><span class="nt">&gt;</span>隐藏输入框标签Label<span class="nt">&lt;/legend&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-group"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-sr-only"</span> <span class="na">for=</span><span class="s">"exampleInputEmail3"</span><span class="nt">&gt;</span>Email address<span class="nt">&lt;/label&gt;</span>
+            <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"email"</span> <span class="na">class=</span><span class="s">"form-control"</span> <span class="na">id=</span><span class="s">"exampleInputEmail3"</span> <span class="na">placeholder=</span><span class="s">"Enter email"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-group"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-sr-only"</span> <span class="na">for=</span><span class="s">"exampleInputPassword3"</span><span class="nt">&gt;</span>Password<span class="nt">&lt;/label&gt;</span>
+            <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"password"</span> <span class="na">class=</span><span class="s">"form-control"</span> <span class="na">id=</span><span class="s">"exampleInputPassword3"</span> <span class="na">placeholder=</span><span class="s">"Password"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-checkbox"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"checkbox"</span><span class="nt">&gt;</span> Remember me
+            <span class="nt">&lt;/label&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;input</span> <span class="na">class=</span><span class="s">"btn btn-style8 "</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"submit"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/fieldset&gt;</span>
+<span class="nt">&lt;/form&gt;</span></code></pre></figure>
+
+<form class="form-horizontal">
+    <fieldset>
+        <legend class="p30 f18 font-bold font-blue tc">水平显示</legend>
+        <div class="form-group row-fluid">
+            <label class="span3 form-label">Email</label>
+            <div class="span6">
+                <p class="form-control-static">email@example.com</p>
+            </div>
+        </div>
+        <div class="form-group row-fluid">
+            <label class="form-label span3" for="inputEmail3">Email</label>
+            <div class="span6">
+                <input type="email" class="form-control" id="inputEmail3" placeholder="Email" />
+            </div>
+        </div>
+        <div class="form-group row-fluid">
+            <label class="form-label span3" for="inputPassword3">Password</label>
+            <div class="span9">
+                <input type="password" class="form-control" id="inputPassword3" placeholder="Password" />
+            </div>
+        </div>
+        <div class="form-group row-fluid">
+            <div class="offset3 span9">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" /> Remember me
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row-fluid">
+            <div class="offset3 span9">
+                <input class="btn btn-style8 btn-xl" type="submit" value="submit" />
+            </div>
+        </div>
+    </fieldset>
+</form>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form</span> <span class="na">class=</span><span class="s">"form-horizontal"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;fieldset&gt;</span>
+        <span class="nt">&lt;legend</span> <span class="na">class=</span><span class="s">"p30 f18 font-bold font-blue tc"</span><span class="nt">&gt;</span>水平显示<span class="nt">&lt;/legend&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-group row-fluid"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"span3 form-label"</span><span class="nt">&gt;</span>Email<span class="nt">&lt;/label&gt;</span>
+            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"span6"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;p</span> <span class="na">class=</span><span class="s">"form-control-static"</span><span class="nt">&gt;</span>email@example.com<span class="nt">&lt;/p&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-group row-fluid"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-label span3"</span> <span class="na">for=</span><span class="s">"inputEmail3"</span> <span class="nt">&gt;</span>Email<span class="nt">&lt;/label&gt;</span>
+            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"span6"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"email"</span> <span class="na">class=</span><span class="s">"form-control"</span> <span class="na">id=</span><span class="s">"inputEmail3"</span> <span class="na">placeholder=</span><span class="s">"Email"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-group row-fluid"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-label span3"</span> <span class="na">for=</span><span class="s">"inputPassword3"</span> <span class="nt">&gt;</span>Password<span class="nt">&lt;/label&gt;</span>
+            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"span9"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"password"</span> <span class="na">class=</span><span class="s">"form-control"</span> <span class="na">id=</span><span class="s">"inputPassword3"</span> <span class="na">placeholder=</span><span class="s">"Password"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-group row-fluid"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"offset3 span9"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"checkbox"</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;label&gt;</span>
+                        <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"checkbox"</span><span class="nt">&gt;</span> Remember me
+                    <span class="nt">&lt;/label&gt;</span>
+                <span class="nt">&lt;/div&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-group row-fluid"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"offset3 span9"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">class=</span><span class="s">"btn btn-style8 btn-xl"</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"submit"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/fieldset&gt;</span>
+<span class="nt">&lt;/form&gt;</span></code></pre></figure>
+
+<form>
+    <fieldset>
+        <legend class="db p30 f18 font-bold font-blue tc">水平checkbox</legend>
+        <div class="form-group">
+            <label class="form-checkbox-inline">
+                <input type="checkbox" id="inlineCheckbox1" value="option1" /> 1
+            </label>
+            <label class="form-checkbox-inline">
+                <input type="checkbox" id="inlineCheckbox2" value="option2" /> 2
+            </label>
+            <label class="form-checkbox-inline">
+                <input type="checkbox" id="inlineCheckbox3" value="option3" /> 3
+            </label>
+
+            <label class="form-radio-inline">
+                <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" /> 1
+            </label>
+            <label class="form-radio-inline">
+                <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2" /> 2
+            </label>
+            <label class="form-radio-inline">
+                <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3" /> 3
+            </label>
+        </div>
+        <div class="form-group">
+            <select class="form-control">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+            </select>
+        </div>
+    </fieldset>
+</form>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form&gt;</span>
+    <span class="nt">&lt;fieldset&gt;</span>
+        <span class="nt">&lt;legend</span> <span class="na">class=</span><span class="s">"db p30 f18 font-bold font-blue tc"</span><span class="nt">&gt;</span>水平checkbox<span class="nt">&lt;/legend&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-group"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-checkbox-inline"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"checkbox"</span> <span class="na">id=</span><span class="s">"inlineCheckbox1"</span> <span class="na">value=</span><span class="s">"option1"</span><span class="nt">&gt;</span> 1
+            <span class="nt">&lt;/label&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-checkbox-inline"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"checkbox"</span> <span class="na">id=</span><span class="s">"inlineCheckbox2"</span> <span class="na">value=</span><span class="s">"option2"</span><span class="nt">&gt;</span> 2
+            <span class="nt">&lt;/label&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-checkbox-inline"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"checkbox"</span> <span class="na">id=</span><span class="s">"inlineCheckbox3"</span> <span class="na">value=</span><span class="s">"option3"</span><span class="nt">&gt;</span> 3
+            <span class="nt">&lt;/label&gt;</span>
+
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-radio-inline"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"radio"</span> <span class="na">name=</span><span class="s">"inlineRadioOptions"</span> <span class="na">id=</span><span class="s">"inlineRadio1"</span> <span class="na">value=</span><span class="s">"option1"</span><span class="nt">&gt;</span> 1
+            <span class="nt">&lt;/label&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-radio-inline"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"radio"</span> <span class="na">name=</span><span class="s">"inlineRadioOptions"</span> <span class="na">id=</span><span class="s">"inlineRadio2"</span> <span class="na">value=</span><span class="s">"option2"</span><span class="nt">&gt;</span> 2
+            <span class="nt">&lt;/label&gt;</span>
+            <span class="nt">&lt;label</span> <span class="na">class=</span><span class="s">"form-radio-inline"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"radio"</span> <span class="na">name=</span><span class="s">"inlineRadioOptions"</span> <span class="na">id=</span><span class="s">"inlineRadio3"</span> <span class="na">value=</span><span class="s">"option3"</span><span class="nt">&gt;</span> 3
+            <span class="nt">&lt;/label&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"form-group"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;select</span> <span class="na">class=</span><span class="s">"form-control"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;option&gt;</span>1<span class="nt">&lt;/option&gt;</span>
+                <span class="nt">&lt;option&gt;</span>2<span class="nt">&lt;/option&gt;</span>
+                <span class="nt">&lt;option&gt;</span>3<span class="nt">&lt;/option&gt;</span>
+                <span class="nt">&lt;option&gt;</span>4<span class="nt">&lt;/option&gt;</span>
+                <span class="nt">&lt;option&gt;</span>5<span class="nt">&lt;/option&gt;</span>
+            <span class="nt">&lt;/select&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/fieldset&gt;</span>
+<span class="nt">&lt;/form&gt;</span></code></pre></figure>
+
+<form>
+    <fieldset>
+        <legend class="db p30 f18 font-bold font-blue tc">控件大小</legend>
+        <input class="form-control form-control-lg" type="text" placeholder=".input-lg" />
+        <input class="form-control" type="text" placeholder="Default input" />
+        <input class="form-control form-control-sm" type="text" placeholder=".input-sm" />
+
+        <select class="form-control form-control-lg">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+        </select>
+        <select class="form-control">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+        </select>
+        <select class="form-control form-control-sm">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+        </select>
+    </fieldset>
+</form>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;form&gt;</span>
+    <span class="nt">&lt;fieldset&gt;</span>
+        <span class="nt">&lt;legend</span> <span class="na">class=</span><span class="s">"db p30 f18 font-bold font-blue tc"</span><span class="nt">&gt;</span>控件大小<span class="nt">&lt;/legend&gt;</span>
+        <span class="nt">&lt;input</span> <span class="na">class=</span><span class="s">"form-control form-control-lg"</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">placeholder=</span><span class="s">".input-lg"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;input</span> <span class="na">class=</span><span class="s">"form-control"</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">placeholder=</span><span class="s">"Default input"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;input</span> <span class="na">class=</span><span class="s">"form-control form-control-sm"</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">placeholder=</span><span class="s">".input-sm"</span><span class="nt">&gt;</span>
+
+        <span class="nt">&lt;select</span> <span class="na">class=</span><span class="s">"form-control form-control-lg"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;option&gt;</span>1<span class="nt">&lt;/option&gt;</span>
+            <span class="nt">&lt;option&gt;</span>2<span class="nt">&lt;/option&gt;</span>
+            <span class="nt">&lt;option&gt;</span>3<span class="nt">&lt;/option&gt;</span>
+        <span class="nt">&lt;/select&gt;</span>
+        <span class="nt">&lt;select</span> <span class="na">class=</span><span class="s">"form-control"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;option&gt;</span>1<span class="nt">&lt;/option&gt;</span>
+            <span class="nt">&lt;option&gt;</span>2<span class="nt">&lt;/option&gt;</span>
+            <span class="nt">&lt;option&gt;</span>3<span class="nt">&lt;/option&gt;</span>
+        <span class="nt">&lt;/select&gt;</span>
+        <span class="nt">&lt;select</span> <span class="na">class=</span><span class="s">"form-control form-control-sm"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;option&gt;</span>1<span class="nt">&lt;/option&gt;</span>
+            <span class="nt">&lt;option&gt;</span>2<span class="nt">&lt;/option&gt;</span>
+            <span class="nt">&lt;option&gt;</span>3<span class="nt">&lt;/option&gt;</span>
+        <span class="nt">&lt;/select&gt;</span>
+    <span class="nt">&lt;/fieldset&gt;</span>
+<span class="nt">&lt;/form&gt;</span></code></pre></figure>
+
+
+  </article>
+
+</div>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = '90arther';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">90Arther</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col  footer-col-1">
+        <ul class="contact-list">
+          <li>90Arther</li>
+          <li><a href="mailto:90arther@gmail.com">90arther@gmail.com</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col  footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/90arther">
+              <span class="icon  icon--github">
+                <svg viewBox="0 0 16 16">
+                  <path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+                </svg>
+              </span>
+
+              <span class="username">90arther</span>
+            </a>
+          </li>
+          
+
+          
+          <li>
+            <a href="https://twitter.com/90arther">
+              <span class="icon  icon--twitter">
+                <svg viewBox="0 0 16 16">
+                  <path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809
+                  c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/>
+                </svg>
+              </span>
+
+              <span class="username">90arther</span>
+            </a>
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col  footer-col-3">
+        <p class="text">Hi,This is Arther. If you are the phone company, I already sent the money. If you are a female, don't worry, I have plenty of money.
+</p>
+      </div>
+    </div>
+    <div>
+      <span>Recommend:</span>
+      <a target="_blank" href="http://www.xymlife.com">xymlife</a>
+    </div>
+
+  </div>
+
+</footer>
+<!-- baidu sitecenter and google-analytics start -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?50b90a4a41340bfd4980a9d54b23cd11";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-48351944-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+<!-- baidu sitecenter and google-analytics end -->
+
+
+  </body>
+
+</html>

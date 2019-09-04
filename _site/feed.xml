@@ -1,0 +1,1275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>90Arther</title>
+    <description>Hi,This is Arther. If you are the phone company, I already sent the money. If you are a female, don't worry, I have plenty of money.
+</description>
+    <link>http://localhost:4000/</link>
+    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate>Wed, 04 Sep 2019 03:19:27 +0000</pubDate>
+    <lastBuildDate>Wed, 04 Sep 2019 03:19:27 +0000</lastBuildDate>
+    <generator>Jekyll v4.0.0</generator>
+    
+      <item>
+        <title>Setup Let's Encrypt With Nginx on Ubuntu 16.04</title>
+        <description>&lt;p&gt;With the rapid development of the Internet, network security has become an important part of network development, and SSL certificate plays an important role as an important product to maintain the safe transmission of network data. SSL enables encrypted communication between the user and the server. Can effectively reduce the risk of hacking and identity theft or theft of sensitive information (such as credit card number, user name, password, e-mail, transaction amount, etc.). SSL certificate can not be overlooked, the future will be the site of the SSL certificate of standard products.&lt;/p&gt;
+
+&lt;p&gt;Thanks to Let’s Encrypt, we can get the ssl certificate free of charge and use it to encrypt the data between the client and the server without worrying that the data is being stolen.&lt;/p&gt;
+
+&lt;p&gt;In this guide, we will walk you through how to set up Let’s Encrypt and http2 with nginx on ubuntu 16.04 VPS. During this process, you’ll learn how Let’s Encrypt verification your server, issued a ssl cert for your server,  and auto renew cert.&lt;/p&gt;
+
+&lt;h3 id=&quot;requirements&quot;&gt;Requirements&lt;/h3&gt;
+&lt;p&gt;Before starting this guide, you will need to prepare the following：&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Requirements list:&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;A VPS with Ubuntu 16.04&lt;/li&gt;
+    &lt;li&gt;A public IP( We assume that your ip address is: 192.0.2.0)&lt;/li&gt;
+    &lt;li&gt;443 port and 80 port opened for Internet.&lt;/li&gt;
+    &lt;li&gt;A domian or subdomain. Let’s encrypt need a valiate domain to verification your server&lt;/li&gt;
+    &lt;li&gt;Python 2.6, 2.7, or 3.3+&lt;/li&gt;
+    &lt;li&gt;512MB of RAM at lease&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;prerequisites&quot;&gt;Prerequisites&lt;/h3&gt;
+&lt;p&gt;Parse your domain name into your public network IP. This step is very important, otherwise you will not be able to get a valid SSL certificate.&lt;/p&gt;
+
+&lt;p&gt;you should create a non-root user and add user to the administer the system (admin) group. If you have already done so, please skip this section.&lt;/p&gt;
+
+&lt;p&gt;Create the user by entering the following command. Replace &lt;code class=&quot;highlighter-rouge&quot;&gt;arther&lt;/code&gt; with your desired username:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;adduser arther&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Add the user to the administer the system (admin) group by entering the following command. Replace &lt;code class=&quot;highlighter-rouge&quot;&gt;arther&lt;/code&gt; with your username:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;usermod &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-G&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;arther&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Log out of your vps as the &lt;code class=&quot;highlighter-rouge&quot;&gt;root&lt;/code&gt; user by entering the following command:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span class=&quot;nb&quot;&gt;logout&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Log in to your VPS as the new user by entering the following command. Replace &lt;code class=&quot;highlighter-rouge&quot;&gt;arther&lt;/code&gt; with your username, and the example IP address with your VPS’s IP address:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;ssh arther@192.0.2.0&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;install-nginx&quot;&gt;Install Nginx&lt;/h3&gt;
+&lt;p&gt;You will need to have nginx installed in order to work through these steps. If you haven’t already done so, install nginx by entering the following command.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get update
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;nginx&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Open your browser and access the public IP address, you will see &lt;code class=&quot;highlighter-rouge&quot;&gt;Welcome to Nginx&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;hosting-a-website&quot;&gt;Hosting a website&lt;/h3&gt;
+&lt;p&gt;In this section, I will show you how to hostting a website which will be setup with SSL cert.&lt;/p&gt;
+
+&lt;p&gt;Navigate to your /var/www directory:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /var/www&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;create a folder to hold your website by entering the following command, replacing &lt;code class=&quot;highlighter-rouge&quot;&gt;example.com&lt;/code&gt; with your domain name:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo mkdir &lt;/span&gt;example.com&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;create a default page for website and make sure it’s read permission&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo touch&lt;/span&gt; /var/www/example.com/index.html
+&lt;span class=&quot;nb&quot;&gt;sudo chmod &lt;/span&gt;a+rw /var/www/example.com/index.html
+&lt;span class=&quot;nb&quot;&gt;sudo echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'hello world'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; /var/www/example.com/index.html&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;create a nginx conf by entering the following command, replacing &lt;code class=&quot;highlighter-rouge&quot;&gt;example.com&lt;/code&gt; with your domain name:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;vim /etc/nginx/sites-available/example.com&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Copy and paste the settings shown below in to the file, replacing &lt;code class=&quot;highlighter-rouge&quot;&gt;example.com&lt;/code&gt; with your domain name:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-conf&quot; data-lang=&quot;conf&quot;&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt; {
+    &lt;span class=&quot;n&quot;&gt;listen&lt;/span&gt;        &lt;span class=&quot;m&quot;&gt;80&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;server_name&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;example&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;com&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;charset&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;utf8&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt;          /&lt;span class=&quot;n&quot;&gt;var&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;www&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;example&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;com&lt;/span&gt;/;
+}&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Enable the site and disable the default host, replacing &lt;code class=&quot;highlighter-rouge&quot;&gt;example.com&lt;/code&gt; with your domain name:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-conf&quot; data-lang=&quot;conf&quot;&gt;&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ln&lt;/span&gt; -&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;etc&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;nginx&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;sites&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;available&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;example&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;com&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;etc&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;nginx&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;sites&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;enabled&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;example&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;com&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rm&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;etc&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;nginx&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;sites&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;enabled&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;default&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Test the conf and reload nginx conf by  entering the following command:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;nginx &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;nginx &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; reload&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Check the website by open your browser and access the &lt;code class=&quot;highlighter-rouge&quot;&gt;example.com&lt;/code&gt;, replacing &lt;code class=&quot;highlighter-rouge&quot;&gt;example.com&lt;/code&gt; with your domain name. Your will see a page with &lt;code class=&quot;highlighter-rouge&quot;&gt;hello world&lt;/code&gt; .&lt;/p&gt;
+
+&lt;h3 id=&quot;install-certbot&quot;&gt;Install Certbot&lt;/h3&gt;
+&lt;p&gt;In this section, We will show you how to obtain SSL certs through Certbot.&lt;/p&gt;
+
+&lt;p&gt;Thanks to Certbot team, we can use Certbot to obtain certs from Let’s encrypt. And another lucky thing is Certbot can be installed through PPA. Just entering the following command to install it.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;software-properties-common
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;add-apt-repository ppa:certbot/certbot
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get update
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;python-certbot-nginx&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Certbot has an Nginx plugin, which is supported on many platforms, and automates both obtaining and installing certs:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;certbot &lt;span class=&quot;nt&quot;&gt;--nginx&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The plugin will list valid websites and ask which names would you like to activate HTTPS. Please select the website we just created, and plugin will get a certificate for you and have Certbot edit your Nginx configuration automatically to serve it.&lt;/p&gt;
+
+&lt;p&gt;As the result message shown. Congratulations! You had obtained a cert for your website. Open your web browser and navigate to your domain (replace example.com with your actual domain name): &lt;code class=&quot;highlighter-rouge&quot;&gt;https://example.com&lt;/code&gt;, your will see &lt;code class=&quot;highlighter-rouge&quot;&gt;safe&lt;/code&gt; before the URL.&lt;/p&gt;
+
+&lt;h3 id=&quot;auto-renew-cert&quot;&gt;Auto renew cert&lt;/h3&gt;
+&lt;p&gt;Your cert will expire after three months. To obtain a new or tweaked version of this certificate in the future, simply run certbot again with the “certonly” option.&lt;/p&gt;
+
+&lt;p&gt;With the crontab, we can auto renew our cert. Just entering the following command to install a new crontab task.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;crontab &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Copy and paste the settings shown below in to the file, the task will renew cert at At 2 am every first day of month.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-conf&quot; data-lang=&quot;conf&quot;&gt;&lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; * * &lt;span class=&quot;n&quot;&gt;certbot&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;renew&lt;/span&gt; --&lt;span class=&quot;n&quot;&gt;dry&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+</description>
+        <pubDate>Wed, 16 Aug 2017 23:57:25 +0000</pubDate>
+        <link>http://localhost:4000/server/2017/08/16/how-to-setup-letsencrypt-with-nginx-on-ubuntu.html</link>
+        <guid isPermaLink="true">http://localhost:4000/server/2017/08/16/how-to-setup-letsencrypt-with-nginx-on-ubuntu.html</guid>
+        
+        <category>ssl letsencrypt nginx ubuntu ubuntu16.04</category>
+        
+        
+        <category>server</category>
+        
+      </item>
+    
+      <item>
+        <title>在ubuntu 14.04的nginx配置letsencrypt证书与http2</title>
+        <description>&lt;p&gt;这篇文章很久前就想写了。只是一直没时间（懒）。不过现在有个习惯，好的经验，会先用evernote记录起来，主要把关键点记录下来，包括截图、链接、心得等。过后写就有大纲，这不，这次就不会像以前一样不知从哪里开始。&lt;/p&gt;
+
+&lt;p&gt;先上letsencrypt验证服务器获取证书基本过程，首先letsencrypt会先到访问一下我们的服务器，确保我们的域名跟服务器对应上，才会把证书颁发给我们，我们拿到证书后，就可以向用户的客户端提供证书跟私钥，这样才能验证ssl。图示：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/letsencrypt.png&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;准备工作&quot;&gt;准备工作：&lt;/h3&gt;
+
+&lt;p&gt;首先我们要拥有一个公网IP的ubuntu 14.04的服务器，并且我们所使用的账户在sudo组里。&lt;/p&gt;
+
+&lt;p&gt;其次，我们必须拥有一个自己可控制解析功能的域名。&lt;/p&gt;
+
+&lt;p&gt;以上如果准备完毕，我们解析一个A记录到服务器所在IP，比如我是解析spa.90arther.net到一台云主机，下面都以spa.90arther.net为例。&lt;/p&gt;
+
+&lt;h3 id=&quot;步骤一安装letsencrypt&quot;&gt;步骤一：安装letsencrypt&lt;/h3&gt;
+
+&lt;p&gt;对于ubuntu 14.04下的nginx，官网上推荐我们下载安装脚本，因为没有对应的安装源可以给我们的安装，&lt;a href=&quot;https://certbot.eff.org/#ubuntutrusty-nginx&quot;&gt;官网安装方法&lt;/a&gt;：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo mkdir&lt;/span&gt; /opt/letsencrypt &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /opt/letsencrypt
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;wget https://dl.eff.org/certbot-auto
+&lt;span class=&quot;nb&quot;&gt;sudo chmod &lt;/span&gt;a+x certbot-auto&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;certbot-auto将安装它的所有依赖并且自动升级客户端代码：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;./certbot-auto&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;步骤二获取证书&quot;&gt;步骤二：获取证书&lt;/h3&gt;
+
+&lt;p&gt;先安装nginx，如果您已经安装，可以忽略此步骤：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;nginx&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;确保以下nginx的路径/.well-known能访问以便通过letsencrypt的验证。&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo mkdir&lt;/span&gt; /opt/letsencrypt/acme-challenge &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;sudo chmod &lt;/span&gt;666 /opt/letsencrypt/acme-challenge
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;vim /etc/nginx/sites-available/spa.90arther.net&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;spa.90arther.net配置文件内容如下：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-conf&quot; data-lang=&quot;conf&quot;&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt; {
+    &lt;span class=&quot;n&quot;&gt;listen&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;80&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;server_name&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spa&lt;/span&gt;.&lt;span class=&quot;m&quot;&gt;90&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arther&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;opt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;letsencrypt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;acme&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;challenge&lt;/span&gt;/;
+
+    &lt;span class=&quot;n&quot;&gt;location&lt;/span&gt; /.&lt;span class=&quot;n&quot;&gt;well&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;known&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;acme&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;challenge&lt;/span&gt;/ {
+        &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;;
+        &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;opt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;letsencrypt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;acme&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;challenge&lt;/span&gt;/;
+    }
+
+}&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;因为nginx默认是跑site-enabled下的配置文件，建立一条nginx软链&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-conf&quot; data-lang=&quot;conf&quot;&gt;&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ln&lt;/span&gt; -&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;etc&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;nginx&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;site&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;available&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;spa&lt;/span&gt;.&lt;span class=&quot;m&quot;&gt;90&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arther&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;etc&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;nginx&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;sites&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;enabled&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;spa&lt;/span&gt;.&lt;span class=&quot;m&quot;&gt;90&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arther&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;测试nginx配置文件：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-conf&quot; data-lang=&quot;conf&quot;&gt;&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nginx&lt;/span&gt; -&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;一般配置写错会输出错误信息，根据提示修改就可以，接着reload配置nginx&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-conf&quot; data-lang=&quot;conf&quot;&gt;&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nginx&lt;/span&gt; -&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reload&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;测试我们的服务器是否配置成功：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-conf&quot; data-lang=&quot;conf&quot;&gt;&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'hello letsencrypt'&lt;/span&gt; &amp;gt; /&lt;span class=&quot;n&quot;&gt;opt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;letsencrypt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;acme&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;challenge&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;打开浏览器，访问网站：http://spa.90arther.net，看到显示hello letsencrypt，恭喜你，完成服务器nginx的准备工作。&lt;/p&gt;
+
+&lt;p&gt;服务器已经做好让letsencrypt验证的准备工作了，接下来就是获取证书了，我们将证书放到目录/opt/letsencrypt&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;/opt/letsencrypt/certbot-auto certonly &lt;span class=&quot;nt&quot;&gt;--webroot&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-w&lt;/span&gt; /opt/letsencrypt/acme-challenge/ &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; spa.90arther.net&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;成功获取ssl证书：
+&lt;img src=&quot;/img/get-ssl.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;你会获得以下四份文件：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/ssl-live.png&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;步骤三配置tlsssl在nginx&quot;&gt;步骤三：配置TLS／SSL在nginx&lt;/h3&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;vim /etc/nginx/site-available/spa.90arther.net&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-conf&quot; data-lang=&quot;conf&quot;&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt; {
+    &lt;span class=&quot;n&quot;&gt;listen&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;80&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;server_name&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spa&lt;/span&gt;.&lt;span class=&quot;m&quot;&gt;90&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arther&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;;
+
+    &lt;span class=&quot;n&quot;&gt;location&lt;/span&gt; /.&lt;span class=&quot;n&quot;&gt;well&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;known&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;acme&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;challenge&lt;/span&gt;/ {
+        &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;;
+        &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;opt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;letsencrypt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;acme&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;challenge&lt;/span&gt;/;
+      }
+
+    &lt;span class=&quot;n&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;302&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;https&lt;/span&gt;://$&lt;span class=&quot;n&quot;&gt;host&lt;/span&gt;$&lt;span class=&quot;n&quot;&gt;request_uri&lt;/span&gt;;
+
+}
+&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt; {
+    &lt;span class=&quot;n&quot;&gt;listen&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;443&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;server_name&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spa&lt;/span&gt;.&lt;span class=&quot;m&quot;&gt;90&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arther&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;on&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_certificate&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;etc&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;letsencrypt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;live&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;spa&lt;/span&gt;.&lt;span class=&quot;m&quot;&gt;90&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arther&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;fullchain&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;pem&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_certificate_key&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;etc&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;letsencrypt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;live&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;spa&lt;/span&gt;.&lt;span class=&quot;m&quot;&gt;90&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arther&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;privkey&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;pem&lt;/span&gt;;
+
+    &lt;span class=&quot;n&quot;&gt;ssl_protocols&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TLSv1&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TLSv1&lt;/span&gt;.&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TLSv1&lt;/span&gt;.&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_prefer_server_ciphers&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;on&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_ciphers&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA'&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_session_timeout&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_session_cache&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shared&lt;/span&gt;:&lt;span class=&quot;n&quot;&gt;SSL&lt;/span&gt;:&lt;span class=&quot;m&quot;&gt;50&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_stapling&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;on&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_stapling_verify&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;on&lt;/span&gt;;
+
+    &lt;span class=&quot;n&quot;&gt;location&lt;/span&gt; /.&lt;span class=&quot;n&quot;&gt;well&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;known&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;acme&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;challenge&lt;/span&gt;/ {
+        &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;;
+        &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;opt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;letsencrypt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;acme&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;challenge&lt;/span&gt;/;
+    }
+
+    &lt;span class=&quot;n&quot;&gt;location&lt;/span&gt; / {
+        &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;opt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;letsencrypt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;acme&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;challenge&lt;/span&gt;/;
+        &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;;
+    }
+}&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;测试nginx并reload配置文件&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-conf&quot; data-lang=&quot;conf&quot;&gt;&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nginx&lt;/span&gt; -&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nginx&lt;/span&gt; -&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reload&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;四一些问题及解决办法&quot;&gt;四、一些问题及解决办法：&lt;/h3&gt;
+
+&lt;h4 id=&quot;问题一&quot;&gt;问题一：&lt;/h4&gt;
+
+&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;手机的chrome：一直提示非私密加密，而gitlab开启了HSTS，所以无法打开网页。&lt;/li&gt;
+    &lt;li&gt;pc的safari正常&lt;/li&gt;
+    &lt;li&gt;pc的chrome有时候也是会提示开启了HSTS而非私密，无法访问。&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;https在android的chrome验证不通过，我们尝试把HSTS关闭，但gitlab把HSTS设为默认设置，而且写在代码里面，不可配置：
+https://gitlab.com/gitlab-org/gitlab-ce/issues/568&lt;/p&gt;
+
+&lt;p&gt;解决方案一：https://www.zhihu.com/question/40718588  证书需要提供letsencrypt跟自己的，即fullchain.pem，之前用的是cert.pem&lt;/p&gt;
+
+&lt;h4 id=&quot;问题二&quot;&gt;问题二：&lt;/h4&gt;
+&lt;p&gt;我们用https://www.ssllabs.com/ssltest/测来一下，结果是安全级别不够高，才B，所以我们要加一层ssl_dhparam:&lt;/p&gt;
+
+&lt;p&gt;Generate Strong Diffie-Hellman Group：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-conf&quot; data-lang=&quot;conf&quot;&gt;&lt;span class=&quot;n&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;openssl&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dhparam&lt;/span&gt; -&lt;span class=&quot;n&quot;&gt;out&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;etc&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;ssl&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;certs&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;dhparam&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;pem&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2048&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/dhparam.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;在nginx配置上加上配置路径：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-conf&quot; data-lang=&quot;conf&quot;&gt;&lt;span class=&quot;n&quot;&gt;ssl_dhparam&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;etc&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;ssl&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;certs&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;dhparam&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;pem&lt;/span&gt;;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;完整的配置文件如下：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-conf&quot; data-lang=&quot;conf&quot;&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt; {
+    &lt;span class=&quot;n&quot;&gt;listen&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;80&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;server_name&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spa&lt;/span&gt;.&lt;span class=&quot;m&quot;&gt;90&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arther&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;;
+
+    &lt;span class=&quot;n&quot;&gt;location&lt;/span&gt; /.&lt;span class=&quot;n&quot;&gt;well&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;known&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;acme&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;challenge&lt;/span&gt;/ {
+        &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;;
+        &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;opt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;letsencrypt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;acme&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;challenge&lt;/span&gt;/;
+      }
+
+    &lt;span class=&quot;n&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;302&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;https&lt;/span&gt;://$&lt;span class=&quot;n&quot;&gt;host&lt;/span&gt;$&lt;span class=&quot;n&quot;&gt;request_uri&lt;/span&gt;;
+
+}
+&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt; {
+    &lt;span class=&quot;n&quot;&gt;listen&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;443&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;http2&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;server_name&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spa&lt;/span&gt;.&lt;span class=&quot;m&quot;&gt;90&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arther&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;on&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_certificate&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;etc&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;letsencrypt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;live&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;spa&lt;/span&gt;.&lt;span class=&quot;m&quot;&gt;90&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arther&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;fullchain&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;pem&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_certificate_key&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;etc&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;letsencrypt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;live&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;spa&lt;/span&gt;.&lt;span class=&quot;m&quot;&gt;90&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arther&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;net&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;privkey&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;pem&lt;/span&gt;;
+
+    &lt;span class=&quot;n&quot;&gt;ssl_protocols&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TLSv1&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TLSv1&lt;/span&gt;.&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TLSv1&lt;/span&gt;.&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_dhparam&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;etc&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;ssl&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;certs&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;dhparam&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;pem&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_prefer_server_ciphers&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;on&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_ciphers&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA'&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_session_timeout&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_session_cache&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shared&lt;/span&gt;:&lt;span class=&quot;n&quot;&gt;SSL&lt;/span&gt;:&lt;span class=&quot;m&quot;&gt;50&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_stapling&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;on&lt;/span&gt;;
+    &lt;span class=&quot;n&quot;&gt;ssl_stapling_verify&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;on&lt;/span&gt;;
+
+    &lt;span class=&quot;n&quot;&gt;location&lt;/span&gt; /.&lt;span class=&quot;n&quot;&gt;well&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;known&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;acme&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;challenge&lt;/span&gt;/ {
+        &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;;
+        &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;opt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;letsencrypt&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;acme&lt;/span&gt;-&lt;span class=&quot;n&quot;&gt;challenge&lt;/span&gt;/;
+    }
+
+    &lt;span class=&quot;n&quot;&gt;location&lt;/span&gt; / {
+        &lt;span class=&quot;n&quot;&gt;root&lt;/span&gt; /&lt;span class=&quot;n&quot;&gt;home&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;vhost&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;ssl&lt;/span&gt;/;
+        &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;;
+    }
+}&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;同样的测试配置文件并reload：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-shell&quot; data-lang=&quot;shell&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;nginx &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;nginx &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; reload&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;文章参考：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://certbot.eff.org/#ubuntutrusty-nginx&quot;&gt;https://certbot.eff.org/#ubuntutrusty-nginx&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://gitlab.com/gitlab-org/gitlab-ce/blob/v8.1.0/doc/install/installation.md#using-https&quot;&gt;https://gitlab.com/gitlab-org/gitlab-ce/blob/v8.1.0/doc/install/installation.md#using-https&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.zhihu.com/question/40718588&quot;&gt;https://www.zhihu.com/question/40718588&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-14-04&quot;&gt;https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-14-04&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;原文地址(转载请注明出处)：&lt;a href=&quot;http://www.90arther.net/web/2016/06/16/ssl-and-http2.html&quot;&gt;http://www.90arther.net/web/2016/06/16/ssl-and-http2.html&lt;/a&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 16 Jun 2016 12:57:25 +0000</pubDate>
+        <link>http://localhost:4000/web/2016/06/16/ssl-and-http2.html</link>
+        <guid isPermaLink="true">http://localhost:4000/web/2016/06/16/ssl-and-http2.html</guid>
+        
+        <category>ssl http2 letsencrypt nginx</category>
+        
+        
+        <category>web</category>
+        
+      </item>
+    
+      <item>
+        <title>时间管理GTD</title>
+        <description>&lt;p&gt;原文地址(转载请注明出处)：&lt;a href=&quot;http://www.90arther.net/jekyll/update/2016/04/03/GTD.html&quot;&gt;http://www.90arther.net/jekyll/update/2016/04/03/GTD.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/shalou.jpg&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;买了kindle包月服务，虽然书籍量不是很多，但是其中还是包含来一些不错的书籍，挑选来几本加上以前买的书作为假期书单，如下：&lt;/span&gt;
+&lt;span style=&quot;font-size: 14px&quot;&gt;清明假期书单:《时间管理》、《React》——中文版、《重新定义公司》&lt;/span&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;昨天早早起来赶高铁回家，一路上闲来无事，索性读了《时间管理》。书中观点及方法居多，这里从其中一点展开讨论，结合我自身情况，做出改进，大家可以找这本书读读，能获益更多方法，OK：&lt;/p&gt;
+
+&lt;h4 id=&quot;时间意识&quot;&gt;时间意识&lt;/h4&gt;
+
+&lt;p&gt;首先，我们要了解我们是怎么花我们最宝贵的资产，即时间。大家最平常的一天是如何度过的呢？&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;我是一个程序猿:&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;早上到公司，刚喝一口粥，就被叫去开早会，开完回来继续喝粥看邮件&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;九点多，突然同事甲过来，说：“这个界面，怎么打不开啊？”&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;我问：“其它页面呢？”&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;同事甲：“也不行！”&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;我：“其它公司产品呢？”&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;吧啦吧啦。。。同事甲的手机没开网络！！！&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;看了时间，早上十点. 要赶紧吃早餐看邮件，看看今天新增了什么需求&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;产品过来：“我觉得这个界面要改一改好！想看看你是否能做再发需求给你”&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;吧啦吧啦。。。嗯，这些我们可以实现，但是需要排期，等需求评审会。&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;早上十点半，哇，企业qq这么多消息，翻翻翻，看看看，你不得不看，有些通知他就是只在群里说，或者有人怨你“我发消息你怎么不看呀”。看到最后，其实又是主群吐槽早餐发现小虫之类的。&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;人力说，有人在笔试，你待会有空面一下吗？&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;滴答滴答。。。面完了，该吃午餐了，哦，我早餐的粥还没喝完。&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;下午，同事找我，我这个界面怎么调整，布局挺乱的，帮我改改。。。&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;实习生找，有些问题解决不了，过去跟实习生一起排查问题。&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;四点，开需求评审会，各种博弈。&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;五点多，额，我还没打码，我可是程序猿、程序猿、程序猿啊，电影里面那种一个屏幕密密麻麻都是英文跟数字的样子。可惜现实。。。&lt;/span&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;span style=&quot;font-size: 14px&quot;&gt;晚上吃完饭，夜深人静，我终于可以安静的打代码了。这也是为什么程序猿的工作时间是弹性制度的原因之一吧。&lt;/span&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;这个案例其实跟其它职位的同事也是差不多的，又多少情况你对号入座了呢？&lt;/p&gt;
+
+&lt;p&gt;通过对时间的梳理，你发现你浪费了很多时间，从而让自己有时间管理的意识。面对这些情况，做出以下改进：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;我是一个程序猿:&lt;/li&gt;
+  &lt;li&gt;邮件：使用邮件过滤器，自动分类邮件，把一些常见的系统notification自动归档，把商品推销、论坛、社交的邮件都自动归档&lt;/li&gt;
+  &lt;li&gt;业务的反馈：提供一套审查的流程方法规范给同事自我排查，比如，通过一定的顺序自我排查，比如一个网站，看看网站其它页面，其它网站、换浏览器、检查网络（是否链接、开vpn、切换4g等）、换电脑（可以问问周围同事）、&lt;/li&gt;
+  &lt;li&gt;产品的反馈：请提issue，并按@各个方向的同事，不要这样逐个找。&lt;/li&gt;
+  &lt;li&gt;企业QQ：设置闹钟或者买个沙漏，半小时看一次够了，真的够了，不要相信那些永远把小事说得很紧急的人。&lt;/li&gt;
+  &lt;li&gt;人力面试：跟hr说先看笔试结果，如果笔试跟简历都没有料，那也没必要面试了。&lt;/li&gt;
+  &lt;li&gt;实习生：总结一些常见坑点到wiki，避免重复踩坑。&lt;/li&gt;
+  &lt;li&gt;晚上吃完饭，夜深人静，我在享受一杯温热的奶茶、“浮景”（潮汕话）。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;青春稍纵即逝，行动已刻不容缓。—— 本文作者：90arther&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;时间管理是运用策略和技术，帮助你尽可能有效地利用你的时间。—— 《时间管理》&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;原文地址(转载请注明出处)：&lt;a href=&quot;http://www.90arther.net/jekyll/update/2016/04/03/GTD.html&quot;&gt;http://www.90arther.net/jekyll/update/2016/04/03/GTD.html&lt;/a&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Sun, 03 Apr 2016 12:57:24 +0000</pubDate>
+        <link>http://localhost:4000/jekyll/update/2016/04/03/GTD.html</link>
+        <guid isPermaLink="true">http://localhost:4000/jekyll/update/2016/04/03/GTD.html</guid>
+        
+        <category>时间管理 GTD</category>
+        
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+      <item>
+        <title>前端资源管理解决方案</title>
+        <description>&lt;h1 id=&quot;前端资源管理解决方案&quot;&gt;前端资源管理解决方案&lt;/h1&gt;
+
+&lt;p&gt;前端资源目录架构与预处理问题一直是一个热门的争议话题，业内的技术发展也是突飞猛进。很多以前手动处理的工作，而今都是可以自动化处理。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;举个例子：关于静态资源的cdn部署的问题，记得我还是两年前学生时代的时候，做某某网易的专题页面的时候，当时我做完页面后是交接给编辑，编辑的工作是将图片通过ftp穿到服务器，生成相应的cdn资源路径，然后将cdn路径逐步填写到html与css源码文件中，然后提交代码到服务器。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;以上例子就会有几个问题：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;沟通问题：由于前端页面由前端控制，所以编辑如果看不懂前端的逻辑，无法加路径，就需要与前端不断交流。&lt;/li&gt;
+  &lt;li&gt;技能问题：需要编辑能看懂前端代码，但是懂前端代码的编辑又不愿意做着重复无营养的工作，更多是想直接做前端开发，所以很多编辑都是不是擅长前端的成员。&lt;/li&gt;
+  &lt;li&gt;维护问题：也是最严重的问题，如果一个ui调整，经常需要重新走以上流程，对于现今快速开发的时代，都是不合适的。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;还有诸多问题都曾经困扰着开发人员，而今我们都可以通过部署工具来解决。这两年很多大神都分享自己的解决方案，其中，我记得看过 &lt;a href=&quot;https://github.com/fouber&quot;&gt;@张云龙&lt;/a&gt; 大神的&lt;a href=&quot;https://www.zhihu.com/question/20790576&quot;&gt;前端资源文件方案&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;整理需求后，我们发现，我们可以用环境类型来进行分类开发：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;生产环境：文件合并、压缩、加版本（强缓存）、部署cdn&lt;/li&gt;
+  &lt;li&gt;测试环境：文件合并、不压缩（方便排查）、加版本（强缓存）、不部署cdn&lt;/li&gt;
+  &lt;li&gt;开发环境：文件合并、不压缩（方便调试）、无版本（无缓存）、无cdn、实时监听文件变化编译（实现自动化处理工具）&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;我们整理一份适合我们项目的实践方案：&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;项目说明：&lt;/p&gt;
+
+  &lt;ul&gt;
+    &lt;li&gt;使用FIS3做scss编译、js合并、img合并等前端预处理功能&lt;/li&gt;
+    &lt;li&gt;使用bower做公用包管理器&lt;/li&gt;
+    &lt;li&gt;前端代码源码必须放在&lt;code class=&quot;highlighter-rouge&quot;&gt;src&lt;/code&gt;下&lt;/li&gt;
+    &lt;li&gt;生成代码将发布到&lt;code class=&quot;highlighter-rouge&quot;&gt;static&lt;/code&gt;和&lt;code class=&quot;highlighter-rouge&quot;&gt;template&lt;/code&gt;&lt;/li&gt;
+    &lt;li&gt;DOC : http://fis.baidu.com/fis3/index.html&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;目录结构&quot;&gt;目录结构&lt;/h4&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;	fis-conf.js  //fis配置文件
+	src
+	 |--js       //存放所有的js文件
+	 |--css      //存放所有的css和less和sass文件
+	 |--img      //存放所有的图片资源
+	 |--data     //存放所有的多媒体和其他类型文件
+	 |--json     //存放json数据格式文件
+	index.html   //src的根目录下放html
+	template     //html模版文件
+	static       //其它静态文件的发布地址&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h4 id=&quot;各个环境代码管理&quot;&gt;各个环境代码管理&lt;/h4&gt;
+&lt;p&gt;设置.gitignore。我们的三个环境的发布代码是不一样的，不应该让代码管理器跟踪到，不然会导致各种代码冲突，所以我们应该ignore掉它们，以git为例，在git根目录下设置.gitignore文件：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;template
+static&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h4 id=&quot;设置源码文件过滤器&quot;&gt;设置源码文件过滤器&lt;/h4&gt;
+&lt;p&gt;我们需要用fis设置项目源码文件过滤器, 只有匹配到的目录才会执行fis3，src(默认包括css\js\scss\png\jpg\gif等文件)&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;fis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;project.files&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;src/**&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h4 id=&quot;设置fis的ignore模块&quot;&gt;设置fis的ignore模块&lt;/h4&gt;
+&lt;p&gt;设置排除某些发布版本文件, 匹配到的目录不会执行fis3，
+fis3默认值：[‘node_modules/&lt;strong&gt;’, ‘output/&lt;/strong&gt;’, ‘fis-conf.js’]
+添加基础模块目录 ：’bower_components/**’&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;fis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;project.ignore&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;node_modules/**&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;output/**&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;fis-conf.js&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;bower_components/**&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h4 id=&quot;处理css文件&quot;&gt;处理css文件&lt;/h4&gt;
+&lt;p&gt;目前，最好的css预处理工具是sass，支持用各种变量、函数的形式书写css。我们需要对sass实时编译，让我们可以预览我们的页面效果。
+一下配置会找到所有的scss文件，然后编程生成css。细心的同学还注意到一个选项useSprite，这是fis封装的一个强大的sprite处理功能，支持根据文件内img的路径来定位到图片，合成sprite，并自动修改css文件。&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// 编译sass文件&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;fis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;**/*.scss&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;rExt&lt;/span&gt;        &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;.css&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// from .scss to .css&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;parser&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;plugin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;node-sass&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;//fis-parser-sass option&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}),&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// 对 CSS 进行图片合并&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;useSprite&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;fis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/src/scss/(*.scss)&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;release&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/static/css/$1&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h4 id=&quot;处理js文件&quot;&gt;处理js文件&lt;/h4&gt;
+&lt;p&gt;将所有的js文件发布到static－js目录下：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;fis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/src/js/(*.js)&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;release&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/static/js/$1&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h4 id=&quot;处理图片文件&quot;&gt;处理图片文件&lt;/h4&gt;
+&lt;p&gt;这里是将png、fis、jpg图片发布到static-img目录下，fis3本身的文档有错误，虽然提交MR给官方，而且也合并了，但是官方网站还没更新。&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;fis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/src/img/(*.{png,gif,jpg})&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;release&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/static/img/$1$2$3&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h4 id=&quot;处理html文件&quot;&gt;处理html文件&lt;/h4&gt;
+&lt;p&gt;我们将html文件发布到template目录下：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;fis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/src/(*.html)&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;release&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/templates/game_wall/$1&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;设置生产环境版本&quot;&gt;设置生产环境版本&lt;/h3&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;fis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;media&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;master&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;src/**/(*.{js,css,png,jpg,scss})&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;useHash&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;// 配置md5加密&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;domain&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;http://cdn-path.com&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// cdn路径&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/src/*.png&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// fis-optimizer-png-compressor 插件进行压缩，已内置&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;optimizer&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;plugin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;png-compressor&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/src/scss/*.scss&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// fis-optimizer-clean-css 插件进行压缩，已内置&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;optimizer&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;plugin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;clean-css&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/src/js/*.js&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// fis-optimizer-uglify-js 插件进行压缩，已内置&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;optimizer&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;plugin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;uglify-js&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;设置测试环境版本&quot;&gt;设置测试环境版本&lt;/h3&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;fis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;media&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;src/**/(*.{js,css,png,jpg,scss})&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;useHash&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;// 配置md5加密&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;构建本地开发版&quot;&gt;构建本地开发版：&lt;/h3&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;fis3 release -d ./ -wl&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;构建测试版&quot;&gt;构建测试版：&lt;/h3&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;fis3 release test -d ./&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;部署线上正式环境&quot;&gt;部署线上正式环境&lt;/h3&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;fis3 release master -d ./&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+</description>
+        <pubDate>Fri, 25 Dec 2015 18:06:46 +0000</pubDate>
+        <link>http://localhost:4000/jekyll/update/2015/12/25/frond-of-end-resource.html</link>
+        <guid isPermaLink="true">http://localhost:4000/jekyll/update/2015/12/25/frond-of-end-resource.html</guid>
+        
+        <category>前端</category>
+        
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+      <item>
+        <title>Nginx http code 499</title>
+        <description>&lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/List_of_HTTP_status_codes&quot;&gt;Http status codes&lt;/a&gt; 是我们做web开发需要了解的，昨天，我们的log记录到同一时间的重复请求, 其中有一个请求返回的HTTP状态码为499，另一个是200, 但是查阅http的状态码规范RFC，我们并没有发现这个状态码的定义。
+那显然，这个code是Nginx自定义的，查询&lt;a href=&quot;https://en.wikipedia.org/wiki/List_of_HTTP_status_codes&quot;&gt;wiki&lt;/a&gt;看到下面的结果：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;499 Client Closed Request (Nginx):
+Used in Nginx logs to indicate when the connection has been closed by client while the server is still processing its request, making server unable to send a status code back.[75]&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;大致意思是：当服务器还在处理请求的时候，客户端关闭了连接，以致于服务器无法返回一个状态给客户端。&lt;/p&gt;
+
+&lt;p&gt;我们还查到&lt;a href=&quot;http://marc.info/?l=nginx&amp;amp;m=120127275109824&amp;amp;w=2&quot;&gt;邮件&lt;/a&gt;：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;List:       nginx
+Subject:    Re: 499 error in nginx
+From:       Igor Sysoev &amp;lt;is () rambler-co ! ru&amp;gt;
+Date:       2007-08-27 10:44:30
+Message-ID: 20070827104430.GA50945 () rambler-co ! ru
+[Download message RAW]
+
+On Mon, Aug 27, 2007 at 04:01:33PM +0530, Abhishek Singh wrote:
+
+&amp;gt; I am using nginx as a web and proxy server for mongrel, its working fine but
+&amp;gt; i am facing one problem with nginx , i am getting 499 http client error code
+&amp;gt; in nginx log file, earlier when i was using lighttpd and pound so i was not
+&amp;gt; getting 499 error. So can anyone please explain me what is the main problem
+&amp;gt; and how can i resolve this and what is the exact definition of 499 http
+&amp;gt; status code.
+
+src/http/ngx_http_request.h:
+
+/*
+ * HTTP does not define the code for the case when a client closed
+ * the connection while we are processing its request so we introduce
+ * own code to log such situation when a client has closed the connection
+ * before we even try to send the HTTP header to it
+ */
+#define NGX_HTTP_CLIENT_CLOSED_REQUEST     499
+
+
+-- 
+Igor Sysoev
+http://sysoev.ru/en/&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;另外，Nginx是一个开源项目，托管在github上，我们通过grep, 找到源码：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c&quot; data-lang=&quot;c&quot;&gt;&lt;span class=&quot;cm&quot;&gt;/*
+* HTTP does not define the code for the case when a client closed
+* the connection while we are processing its request so we introduce
+* own code to log such situation when a client has closed the connection
+* before we even try to send the HTTP header to it
+*/&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;#define NGX_HTTP_CLIENT_CLOSED_REQUEST 499&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;根据以上资料，如何解析我们这次出现的情景呢？涉及内部数据，我们不展示log内容了.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;我们注意到一下几点：&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;ol&gt;
+    &lt;li&gt;我们Nginx收到两条请求都创建了数据库数据.&lt;/li&gt;
+    &lt;li&gt;两条log的另一个区别就是客户端的IP地址改变.&lt;/li&gt;
+    &lt;li&gt;根据log上UserAgent，我们发现这是一个oppo 手机的android 4.2的浏览器.&lt;/li&gt;
+    &lt;li&gt;两次请求的时间一致（秒级别）&lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;根据以上收集的证据，我们大致推断为： 当用户准备提交，请求已经到了服务器的程序端，而在服务器返回之前，用户手机的网络突变，有可能是移动过程中，换了基站，所以IP地址改变（TCP链接断开），所以请求无法到达客户端。 而浏览器在断开链接的时候，又重新发送了一次请求。&lt;/p&gt;
+
+&lt;p&gt;以上结果是推断，具体真实原因我们无法知道, 这需要我们在前端加数据记录并在网络好的时候反馈给服务端。&lt;/p&gt;
+
+&lt;p&gt;Reference:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/List_of_HTTP_status_codes&quot;&gt;https://en.wikipedia.org/wiki/List_of_HTTP_status_codes&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://marc.info/?l=nginx&amp;amp;m=120127275109824&amp;amp;w=2&quot;&gt;http://marc.info/?l=nginx&amp;amp;m=120127275109824&amp;amp;w=2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+        <pubDate>Thu, 19 Nov 2015 15:06:46 +0000</pubDate>
+        <link>http://localhost:4000/jekyll/update/2015/11/19/repeat-request.html</link>
+        <guid isPermaLink="true">http://localhost:4000/jekyll/update/2015/11/19/repeat-request.html</guid>
+        
+        <category>nginx</category>
+        
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+      <item>
+        <title>刷优惠劵接口</title>
+        <description>&lt;p&gt;这两天看到师兄发的链接，内容是活动期间内，每天定时可以抢云主机一个月的使用期限。&lt;/p&gt;
+
+&lt;p&gt;此脚本不考虑兼容，建议用chrome。&lt;/p&gt;
+
+&lt;p&gt;于是跑去看了下内容，打开chrome的控制面板（默认快捷键是F12）, 接着切换到networks面板进行抓包。&lt;/p&gt;
+
+&lt;p&gt;得出以下结果：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;接口URL： http://domain.com/xxx/
+
+参数：
+    gift: 礼包编号 &amp;lt;String&amp;gt;
+
+方法：
+    POST
+
+返回值：
+    {static: 1, string: ''}
+
+    static:
+        2: 已抢完
+        8: 你的IP访问次数太高
+
+    string:
+        返回的信息
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;我们开始写刷优惠劵的脚本。&lt;/p&gt;
+
+&lt;p&gt;这个活动要求先登陆才能领取优惠，所以我们先登录好后再加脚本。&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(){&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;timer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;                                                      &lt;span class=&quot;c1&quot;&gt;// 计时器&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;startTime&lt;/span&gt;           &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2015&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;19&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;59&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;// 开始刷接口的时间&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;changApiDirection&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;50&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;                                   &lt;span class=&quot;c1&quot;&gt;// 每50次刷一下cdn的接口&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;direction&lt;/span&gt;           &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;                                  &lt;span class=&quot;c1&quot;&gt;// 刷接口的时间间隔，单位ms&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;count&lt;/span&gt;               &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;                                    &lt;span class=&quot;c1&quot;&gt;// 刷接口的次数&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;callApi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+        &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;promise&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;https://domain.com/www/&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;gift&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;changeApiDirection&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;===&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)?&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;cdn_500&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;cvm_personal&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+        &lt;span class=&quot;nx&quot;&gt;promise&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+            &lt;span class=&quot;nx&quot;&gt;getGift&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+
+        &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;getGift&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;switch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;抢到啦&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;已刷&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;次&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                    &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;抢不到啊&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                    &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                &lt;span class=&quot;nl&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                    &lt;span class=&quot;c1&quot;&gt;// nothing.&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;===&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;已刷&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;次&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+        &lt;span class=&quot;nx&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;nx&quot;&gt;timer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;setInterval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(){&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;startTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;callApi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;direction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;})();&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;接下来，把刷接口的脚本放到console面板运行起来就好了。&lt;/p&gt;
+</description>
+        <pubDate>Thu, 19 Nov 2015 11:06:46 +0000</pubDate>
+        <link>http://localhost:4000/jekyll/update/2015/11/19/get-vouchers.html</link>
+        <guid isPermaLink="true">http://localhost:4000/jekyll/update/2015/11/19/get-vouchers.html</guid>
+        
+        <category>api</category>
+        
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+      <item>
+        <title>iptables设置与开放特殊端口</title>
+        <description>&lt;p&gt;在运维中，有一个环节是通过加防火墙来限制额外流量，确保服务器带宽的步骤。我们一般推荐封闭那些我们不使用的端口。在Ubuntu系统下，我们推荐适用iptables或者ufw（不过听说ufw也是用iptables封装的，然后使用起来更加方便）。&lt;/p&gt;
+
+&lt;h4 id=&quot;1输入命令查看iptables的默认设置&quot;&gt;1、输入命令，查看iptables的默认设置：&lt;/h4&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;iptables &lt;span class=&quot;nt&quot;&gt;-L&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;默认情况下，你会看到下面的输出结果：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;Chain INPUT &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;policy ACCEPT&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+target prot opt &lt;span class=&quot;nb&quot;&gt;source &lt;/span&gt;destination
+
+Chain FORWARD &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;policy ACCEPT&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+target prot opt &lt;span class=&quot;nb&quot;&gt;source &lt;/span&gt;destination
+
+Chain OUTPUT &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;policy ACCEPT&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+target prot opt &lt;span class=&quot;nb&quot;&gt;source &lt;/span&gt;destination&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h4 id=&quot;2输入一下命令创建一个iptables规则&quot;&gt;2、输入一下命令，创建一个iptables规则:&lt;/h4&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;vim /etc/iptables.firewall.rules&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;我们推荐以下设置，默认将允许一些端口: http(80) https(443) ssh(22)&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;filter
+&lt;span class=&quot;c&quot;&gt;# Allow all loopback (lo0) traffic and drop all traffic to 127/8 that doesn't use lo0&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; lo &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; 127.0.0.0/8 &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; REJECT
+
+&lt;span class=&quot;c&quot;&gt;# Accept all established inbound connections&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; state &lt;span class=&quot;nt&quot;&gt;--state&lt;/span&gt; ESTABLISHED,RELATED &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
+
+&lt;span class=&quot;c&quot;&gt;# Allow all outbound traffic - you can modify this to only allow certain traffic&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; OUTPUT &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
+
+&lt;span class=&quot;c&quot;&gt;# Allow HTTP and HTTPS connections from anywhere (the normal ports for websites and SSL).&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; tcp &lt;span class=&quot;nt&quot;&gt;--dport&lt;/span&gt; 80 &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; tcp &lt;span class=&quot;nt&quot;&gt;--dport&lt;/span&gt; 443 &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
+
+&lt;span class=&quot;c&quot;&gt;# Allow SSH connections&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# The -dport number should be the same port number you set in sshd_config&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# &lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; tcp &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; state &lt;span class=&quot;nt&quot;&gt;--state&lt;/span&gt; NEW &lt;span class=&quot;nt&quot;&gt;--dport&lt;/span&gt; 22 &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
+
+&lt;span class=&quot;c&quot;&gt;# Allow ping&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; icmp &lt;span class=&quot;nt&quot;&gt;--icmp-type&lt;/span&gt; echo-request &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
+
+&lt;span class=&quot;c&quot;&gt;# Log iptables denied calls&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; limit &lt;span class=&quot;nt&quot;&gt;--limit&lt;/span&gt; 5/min &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; LOG &lt;span class=&quot;nt&quot;&gt;--log-prefix&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;iptables denied: &quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--log-level&lt;/span&gt; 7
+&lt;span class=&quot;c&quot;&gt;# Drop all other inbound - default deny unless explicitly allowed policy&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; DROP
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; FORWARD &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; DROP
+
+COMMIT&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h4 id=&quot;3那配置文件我们已经写好接下来就是让iptables运用这个规则运行下面命令&quot;&gt;3、那配置文件我们已经写好，接下来，就是让iptables运用这个规则，运行下面命令：&lt;/h4&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;iptables-restore &amp;lt; /etc/iptables.firewall.rules&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h4 id=&quot;4再次检查输入检查命令会发现以下规则已经生效&quot;&gt;4、再次检查输入检查命令，会发现以下规则已经生效：&lt;/h4&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;iptables &lt;span class=&quot;nt&quot;&gt;-L&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;Chain INPUT &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;policy ACCEPT&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+target prot opt &lt;span class=&quot;nb&quot;&gt;source &lt;/span&gt;destination
+ACCEPT all &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; anywhere anywhere
+REJECT all &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; anywhere 127.0.0.0/8 reject-with icmp-port-unreachable
+ACCEPT all &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; anywhere anywhere state RELATED,ESTABLISHED
+ACCEPT tcp &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; anywhere anywhere tcp dpt:http
+ACCEPT tcp &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; anywhere anywhere tcp dpt:https
+ACCEPT tcp &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; anywhere anywhere state NEW tcp dpt:ssh
+ACCEPT icmp &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; anywhere anywhere
+LOG all &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; anywhere anywhere limit: avg 5/min burst 5 LOG level debug prefix &lt;span class=&quot;s2&quot;&gt;&quot;iptables denied: &quot;&lt;/span&gt;
+DROP all &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; anywhere anywhere
+
+Chain FORWARD &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;policy ACCEPT&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+target prot opt &lt;span class=&quot;nb&quot;&gt;source &lt;/span&gt;destination
+DROP all &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; anywhere anywhere
+
+Chain OUTPUT &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;policy ACCEPT&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+target prot opt &lt;span class=&quot;nb&quot;&gt;source &lt;/span&gt;destination
+ACCEPT all &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; anywhere anywhere&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h4 id=&quot;5像我最近搭建了一个shadowsocks的服务需要开放一个8888的端口就让iptables放行回到第二步我们加入这个配置&quot;&gt;5、像我最近搭建了一个shadowsocks的服务，需要开放一个8888的端口，就让iptables放行，回到第二步，我们加入这个配置：&lt;/h4&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# Allow Shadowsocks&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; tcp &lt;span class=&quot;nt&quot;&gt;--dport&lt;/span&gt; 8888 &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h4 id=&quot;6完整配置如下-修改配置之后回到第三步让iptables运用这个规则&quot;&gt;6、完整配置如下, 修改配置之后回到第三步，让iptables运用这个规则：&lt;/h4&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;filter
+&lt;span class=&quot;c&quot;&gt;# Allow all loopback (lo0) traffic and drop all traffic to 127/8 that doesn't use lo0&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; lo &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; 127.0.0.0/8 &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; REJECT
+
+&lt;span class=&quot;c&quot;&gt;# Accept all established inbound connections&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; state &lt;span class=&quot;nt&quot;&gt;--state&lt;/span&gt; ESTABLISHED,RELATED &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
+
+&lt;span class=&quot;c&quot;&gt;# Allow all outbound traffic - you can modify this to only allow certain traffic&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; OUTPUT &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
+
+&lt;span class=&quot;c&quot;&gt;# Allow HTTP and HTTPS connections from anywhere (the normal ports for websites and SSL).&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; tcp &lt;span class=&quot;nt&quot;&gt;--dport&lt;/span&gt; 80 &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; tcp &lt;span class=&quot;nt&quot;&gt;--dport&lt;/span&gt; 443 &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
+
+&lt;span class=&quot;c&quot;&gt;# Allow Shadowsocks&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; tcp &lt;span class=&quot;nt&quot;&gt;--dport&lt;/span&gt; 8888 &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
+
+&lt;span class=&quot;c&quot;&gt;# Allow SSH connections&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# The -dport number should be the same port number you set in sshd_config&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# &lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; tcp &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; state &lt;span class=&quot;nt&quot;&gt;--state&lt;/span&gt; NEW &lt;span class=&quot;nt&quot;&gt;--dport&lt;/span&gt; 22 &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
+
+&lt;span class=&quot;c&quot;&gt;# Allow ping&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; icmp &lt;span class=&quot;nt&quot;&gt;--icmp-type&lt;/span&gt; echo-request &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
+
+&lt;span class=&quot;c&quot;&gt;# Log iptables denied calls&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; limit &lt;span class=&quot;nt&quot;&gt;--limit&lt;/span&gt; 5/min &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; LOG &lt;span class=&quot;nt&quot;&gt;--log-prefix&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;iptables denied: &quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--log-level&lt;/span&gt; 7
+&lt;span class=&quot;c&quot;&gt;# Drop all other inbound - default deny unless explicitly allowed policy&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; INPUT &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; DROP
+&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; FORWARD &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; DROP
+
+COMMIT&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+</description>
+        <pubDate>Fri, 06 Nov 2015 23:15:36 +0000</pubDate>
+        <link>http://localhost:4000/jekyll/update/2015/11/06/iptable-allow-port.html</link>
+        <guid isPermaLink="true">http://localhost:4000/jekyll/update/2015/11/06/iptable-allow-port.html</guid>
+        
+        <category>iptables</category>
+        
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+      <item>
+        <title>Ubuntu搭建nginx服务器!</title>
+        <description>&lt;p&gt;这个demo没有配置log，也没有配置屏蔽敏感文件的访问，是写给朋友的小tip，这里就post出来一下。首先更新软件包源:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;update&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;安装nginx&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;nginx&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;启动nginx&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;service&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;nginx&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;start&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;访问IP地址，默认已经监听了80端口，如果是本地，请访问127.0.0.1，会看到welcome to nginx字样。&lt;/p&gt;
+
+&lt;p&gt;编辑配置文件,其中server_name是配置一个访问网址，root是配置一个访问根目录，默认是访问根目录下的index.html&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;vim&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;etc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;nginx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sites&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;available&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;www&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;domain&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;com&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nginx&quot; data-lang=&quot;nginx&quot;&gt;&lt;span class=&quot;k&quot;&gt;server&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kn&quot;&gt;listen&lt;/span&gt;        &lt;span class=&quot;mi&quot;&gt;80&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kn&quot;&gt;server_name&lt;/span&gt;   &lt;span class=&quot;s&quot;&gt;www.domain.com&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kn&quot;&gt;charset&lt;/span&gt;       &lt;span class=&quot;s&quot;&gt;utf8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kn&quot;&gt;index&lt;/span&gt;         &lt;span class=&quot;s&quot;&gt;index.html&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kn&quot;&gt;root&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;/home/user/vhost/www.domain.com/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;这个文件并不是放在运行目录，需要软链到运行目录，因为在一个服务器上，有多个网站的话，就最后分各个配置文件写，然后修改都比较不会互相影响到。&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ln&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;etc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;nginx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sites&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;available&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;www&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;domain&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;com&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;etc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;nginx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sites&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;enabled&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;www&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;domain&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;com&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;然后就是测试配置是否正确了：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;nginx&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;t&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;如果输出OK等提示就可以重启nginx&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;nginx&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;reload&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;本地配置Host就可以访问了。&lt;/p&gt;
+
+</description>
+        <pubDate>Wed, 04 Nov 2015 10:18:36 +0000</pubDate>
+        <link>http://localhost:4000/jekyll/update/2015/11/04/install-nginx-on-ubuntu.html</link>
+        <guid isPermaLink="true">http://localhost:4000/jekyll/update/2015/11/04/install-nginx-on-ubuntu.html</guid>
+        
+        <category>nginx</category>
+        
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+      <item>
+        <title>前端模块管理!</title>
+        <description>&lt;p&gt;从2014年&lt;a href=&quot;http://yahooeng.tumblr.com/post/96098168666/important-announcement-regarding-yui&quot;&gt;yahoo宣布停止开发YUI&lt;/a&gt;，曾经想一套框架可以包含各种各样的开发需求，而其实，大型框架无法应对我们日益增长的开发需求。&lt;/p&gt;
+
+&lt;p&gt;去年很流行用&lt;a href=&quot;http://gruntjs.com/&quot;&gt;grunt&lt;/a&gt;来管理各个模块，但是，逐渐发现grunt的缺点，一是配置任务的方式，grunt是一种通过配置文件来执行任务，不够灵活。二是运行任务的方式，grunt多是一种顺序执行的概念。&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;module&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;grunt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// Project configuration.&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;grunt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;initConfig&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;pkg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;grunt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;readJSON&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;package.json&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;uglify&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;banner&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/*! &amp;lt;%= pkg.name %&amp;gt; &amp;lt;%= grunt.template.today(&quot;yyyy-mm-dd&quot;) %&amp;gt; */&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;build&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;src&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;src/&amp;lt;%= pkg.name %&amp;gt;.js&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;dest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;build/&amp;lt;%= pkg.name %&amp;gt;.min.js&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
+
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// Load the plugin that provides the &quot;uglify&quot; task.&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;grunt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;loadNpmTasks&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;grunt-contrib-uglify&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// Default task(s).&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;grunt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;registerTask&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;uglify&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;有些人开始转向&lt;a href=&quot;http://gulpjs.com/&quot;&gt;gulp&lt;/a&gt;来管理，因为gulp是基于数据流的形式来运行以及并发的运行模式, 具体参考：&lt;a href=&quot;http://sixrevisions.com/web-development/grunt-vs-gulp/&quot;&gt;gulp vs grunt&lt;/a&gt;。&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;gulp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;task&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// place code for your default task here&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;而随着项目发展，我们发现，由于配置文件的形式与网站页面数量的增多导致维护越来越困难。&lt;/p&gt;
+
+&lt;p&gt;我们希望通过一个打包来完成加载模块、合并文件、预处理文件等操作。&lt;/p&gt;
+
+&lt;h3 id=&quot;欢迎新人webpack登场&quot;&gt;欢迎新人&lt;a href=&quot;https://webpack.github.io&quot;&gt;webpack&lt;/a&gt;登场&lt;/h3&gt;
+
+&lt;p&gt;webpack是一个模块打包器，一个根据依赖加载模块并打包生成静态文件。&lt;/p&gt;
+
+&lt;h4 id=&quot;在认识新人之前我们先充电一下&quot;&gt;在认识新人之前，我们先充电一下：&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;CommonJS&lt;/li&gt;
+  &lt;li&gt;AMD&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;CommonJS让每个模块在自己的命名空间内运行来解决了js的作用域问题, 通过两个工具（require和module）完成以上功能
+require: 加载一个模块到现在的作用域内。
+module: 提供模块暴露出来的接口功能。&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// moduleA.js&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;module&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// moduleB.js&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;multiplyBy2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;moduleA&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;multiplyBy2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// 8&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;AMD（Asynchronous Module Definition）异步模块定义, 对于同步加载的缺陷，我们用COMMONJS来加载异步模块, 而AMD就是一种异步模块定义的方式。&lt;/p&gt;
+
+&lt;p&gt;模块用一个define函数来定义：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;?:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dependencies&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;?:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[],&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;factory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// id: 定义模块名字， 可选&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// dependencies: 定义模块依赖，数组类型&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// factory： 最后一个是定义该模块的人，可以是函数也可以是对象&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// Example: &lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;myModule&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;jquery&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+     &lt;span class=&quot;c1&quot;&gt;// $ is the export of the jquery module.&lt;/span&gt;
+     &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;hello world&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// and use it&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;myModule&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myModule&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{});&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Anoymous module匿名模块&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;jquery&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;hello world&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Multiple dependencies 多个模块&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;jquery&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;./math.js&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;math&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// $ and math are the exports of the jquery module.&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;hello world&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Export value, 那如果运用模块呢, 让模块暴露一些春光给我们呢：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;jquery&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;HelloWorldize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;hello world&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;HelloWorldize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;说了这么多，那跟webpack有什么关系呢？webpack是模块打包器，支持&lt;a href=&quot;http://webpack.github.io/docs/motivation.html&quot;&gt;多种模块定义方式&lt;/a&gt;：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&amp;lt;script-tag&amp;gt; style&lt;/li&gt;
+  &lt;li&gt;CommonJs&lt;/li&gt;
+  &lt;li&gt;AMD and some dialects of is&lt;/li&gt;
+  &lt;li&gt;ES6 modules&lt;/li&gt;
+  &lt;li&gt;and more…&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;我们根据文档，来看怎么使用：&lt;/p&gt;
+
+&lt;p&gt;创建一个entry.js&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// entry.js&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;It works.&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;创建一个index.html&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;head&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;meta&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;charset&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;utf-8&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/head&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
+&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;script&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;text/javascript&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;src&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;bundle.js&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;charset&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;utf-8&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/script&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
+&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/body&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/html&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;接下来运行下面命令:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;webpack&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;entry&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;js&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;bundle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;js&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;这个步骤将编译文件并创建一个捆绑的文件, 打开Index.html：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;It works.&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;我觉得&lt;a href=&quot;http://webpack.github.io/docs/tutorials/getting-started/&quot;&gt;文档例子&lt;/a&gt;更全，所以我们分享一点使用心得：&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;工具这么多，最主要是几点： 内容嵌入、定位资源、声明依赖。在一开始选择的时候，最好分析这些工具的目录架构与开发模式，我们需要做到迁移方便。
+什么是迁移方便呢？也就是说，我们不喜欢因为工具的bug而导致项目出问题，我们也不喜欢项目一旦用了某个工具就摆脱不了。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;感觉定了个大主题，说的东西太大范围，并不能每样详细说明，请见谅。&lt;/p&gt;
+
+&lt;h4 id=&quot;参考&quot;&gt;参考：&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://yahooeng.tumblr.com/post/96098168666/important-announcement-regarding-yui&quot;&gt;RegardingYUI&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://gruntjs.com/&quot;&gt;grunt&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://gulpjs.com/&quot;&gt;gulp&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://webpack.github.io&quot;&gt;webpack#documention&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://sixrevisions.com/web-development/grunt-vs-gulp/&quot;&gt;gulp vs grunt&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://webpack.github.io/docs/motivation.html&quot;&gt;motivation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://webpack.github.io/docs/tutorials/getting-started/&quot;&gt;webpack-tutorials&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+        <pubDate>Tue, 01 Sep 2015 16:27:28 +0000</pubDate>
+        <link>http://localhost:4000/jekyll/update/2015/09/01/package.html</link>
+        <guid isPermaLink="true">http://localhost:4000/jekyll/update/2015/09/01/package.html</guid>
+        
+        <category>npm grunt gulp fis webpack</category>
+        
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+      <item>
+        <title>SASS Maps的一些用法!</title>
+        <description>&lt;p&gt;SASS(3.3以上版本)推出了&lt;a href=&quot;http://sass-lang.com/documentation/file.SASS_REFERENCE.html#maps&quot;&gt;Maps功能&lt;/a&gt;.有点类似于面向对象封装的思想, 我们可以对数据进行封装&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scss&quot; data-lang=&quot;scss&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;key2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;key3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;如范例所示, 我们可以将一些数据以key-value的形式存在一个变量里面.&lt;/p&gt;
+
+&lt;p&gt;“然并卵, 我们用变量存储值很好啊”&lt;/p&gt;
+
+&lt;p&gt;不是的, 我们都知道sass可以设置变量, 让我们可以统一定制一些常用的数据. 但是随便变量的增多, 管理变量, 避免变量冲突给我们带来困惑, 特别是在多人开发项目的情况下.&lt;/p&gt;
+
+&lt;p&gt;所以咯, 来看这么用先, 最基本用法是通过声明之后, 通过map-get获取:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scss&quot; data-lang=&quot;scss&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;key2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;key3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;.class&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;attribue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;map-get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;key1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// .class {attribue : value1}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;我们觉得这样获取数据太繁琐, 跟我们高效开发的理念相违背, 我们需要一点魔法.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scss&quot; data-lang=&quot;scss&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$colors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;red&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;#f00&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;white&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;#fff&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;color-name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;@return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;map-get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$colors&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$color-name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;.class&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nl&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;red&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// .class { color: #f00;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;这样的话, 配合自定义函数, 我们可以讲一组数据封装后, 按需调用输出.&lt;/p&gt;
+
+&lt;p&gt;那如何添加值呢? sass提供map-merge来增加值.&lt;/p&gt;
+
+&lt;p&gt;这里再说一种用法, maps支持&lt;a href=&quot;http://sass-lang.com/documentation/file.SASS_REFERENCE.html#each-multi-assign&quot;&gt;@each directive&lt;/a&gt;, 配合上这个特性, 我们还可以:&lt;/p&gt;
+
+&lt;p&gt;但我们由一些特殊按钮需要定位并生成类时:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-css&quot; data-lang=&quot;css&quot;&gt;&lt;span class=&quot;nc&quot;&gt;.icon-phone&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;background-position&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;top&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;left&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;}&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;.icon-message&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;background-position&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;top&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;right&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;}&lt;/span&gt;
+&lt;span class=&quot;nc&quot;&gt;.icon-start&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;background-position&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;bottom&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;right&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;那我们可以这样批量生成:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scss&quot; data-lang=&quot;scss&quot;&gt;&lt;span class=&quot;nv&quot;&gt;$background-position&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;phone&lt;/span&gt;       &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;top&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;left&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;top&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;right&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;       &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;bottom&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;right&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;@each&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$value&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$background-position&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nc&quot;&gt;.icon-&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$key&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nl&quot;&gt;background-position&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;结语: 谢谢您看到这里, 如果文章中有错误, 欢迎指出, 谢谢.&lt;/p&gt;
+
+&lt;p&gt;参考:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;http://sass-lang.com/documentation/file.SASS_REFERENCE.html#maps&quot;&gt;http://sass-lang.com/documentation/file.SASS_REFERENCE.html#maps&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;http://sass-lang.com/documentation/file.SASS_REFERENCE.html#each-multi-assign&quot;&gt;http://sass-lang.com/documentation/file.SASS_REFERENCE.html#each-multi-assign&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+        <pubDate>Wed, 17 Jun 2015 18:27:28 +0000</pubDate>
+        <link>http://localhost:4000/jekyll/update/2015/06/17/sass-maps.html</link>
+        <guid isPermaLink="true">http://localhost:4000/jekyll/update/2015/06/17/sass-maps.html</guid>
+        
+        <category>sass</category>
+        
+        
+        <category>jekyll</category>
+        
+        <category>update</category>
+        
+      </item>
+    
+  </channel>
+</rss>

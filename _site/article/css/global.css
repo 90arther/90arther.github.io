@@ -1,0 +1,17 @@
+body{background: #eee;width: 90%;margin: 1em auto; font:normal 100% Calibri,Arial,'微软雅黑'; -webkit-text-size-adjust: none;}
+h1{background: #FF801D;width:100%;border-radius: 3px;text-align: center;line-height: 2em;color: #fff;box-shadow: 1px 1px 1px #A6A6A6;}
+h2{color:#ff801d;}
+p{text-indent: 2em;line-height: 1.5em;font-weight: normal;}
+pre{background: #262C30;border-radius: 5px;color: #fff;overflow: hidden;}
+img{width: 50%;margin:0 1em 1em;border: 1px solid #fff;}
+.f{float:left;}
+.r{float:right;}
+
+
+@media screen and (min-width:1024px){
+    body{max-width: 1000px;}
+}
+@media screen and (max-width: 640px){
+    .photo1{width: 86%;display: block;float: none;}
+    .photo2{width: 86%;display: block;float: none;}
+}

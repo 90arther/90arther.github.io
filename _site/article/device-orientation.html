@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Device Orientation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script>
+        <script src="http://cdn.bootcss.com/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+<div class="jumbotron">
+    <div class="container">
+    <div class="page-header">
+        <h1>Device Orientation</h1>
+    </div>
+    <div class="main">
+        <h2>Device Orientation</h2>
+        <table>
+            <tr>
+                <td>Event Supported</td>
+                <td id="doEvent"></td>
+            </tr>
+            <tr>
+                <td>TiltLeft/Right[gamma]</td>
+                <td id="doTiltLR"></td>
+            </tr>
+            <tr>
+                <td>Tilt Front/Back [beta]</td>
+                <td id="doTiltFB"></td>
+            </tr>
+            <tr>
+                <td>Direction [alpha]</td>
+                <td id="doDirection"></td>
+            </tr>
+        </table>
+        <h3>The following img will rotate follow your device.</h3>
+        <img src="http://90arther.net/img/logo.png" id="imgLogo" class="logo" width="100" height="100"/>
+    </div>
+    <p><a class="btn btn-danger btn-lg" role="button" target="_blank" href="http://90arther.github.io/">90Arther</a></p>
+    <p><a class="btn btn-primary btn-lg" role="button" href="http://www.html5rocks.com/en/tutorials/device/orientation">Learn more in html5rocks</a></p>
+  </div>
+</div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+
+if(window.DeviceOrientationEvent){
+    console.log("DeviceOrientation is supported");
+    window.addEventListener('deviceorientation',function(eventData) {
+    // gamma is the left-to-right tilt in degrees, where right is positive
+    var tiltLR = eventData.gamma;
+
+    // beta is the front-to-back tilt in degrees, where front is positive
+    var tiltFB = eventData.beta;
+
+    // alpha is the compass direction the device is facing in degrees
+    var dir = eventData.alpha
+
+    // call our orientation event handler
+    deviceOrientationHandler(tiltLR, tiltFB, dir);
+    changeImg(tiltLR, tiltFB, dir);
+    },false);
+}else{
+    document.getElementById('doEvent').innerHTML = "Not supported.";
+}
+
+function deviceOrientationHandler(tiltLR, tiltFB, dir){
+    document.getElementById("doTiltLR").innerHTML = Math.round(tiltLR);
+    document.getElementById("doTiltFB").innerHTML = Math.round(tiltFB);
+    document.getElementById("doDirection").innerHTML = Math.round(dir);
+}
+function changeImg(tiltLR,tiltFB,dir){
+    var logo = document.getElementById('imgLogo');
+    logo.style.webkitTransform = "rotate(" + tiltLR + "deg) rotate3d(1,0,0, " + (tiltFB*-1)+"deg)";
+    logo.style.MozTransform = "rotate("+ tiltLR +"deg)";
+    logo.style.transform =  "rotate("+ tiltLR +"deg) rotate3d(1,0,0, "+ (tiltFB*-1)+"deg)";
+}
+
+</script>
+  </body>
+</html>
