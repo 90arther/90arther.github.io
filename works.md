@@ -47,24 +47,24 @@ permalink: /works/
 <!-- aside star-->
 <aside>
     <ul>
-        <li><a href="http://wh2.163.com/pk/video.html"> http://wh2.163.com/pk/video.html</a></li>
-        <li><a href="http://wh2.163.com/pk/duizhenbiao.html"> http://wh2.163.com/pk/duizhenbiao.html</a></li>
-        <li><a href="http://wh2.163.com/pk/"> http://wh2.163.com/pk/</a></li>
-        <li><a href="http://xyq.163.com/kaixue/cg.html"> http://xyq.163.com/kaixue/</a></li>
-        <li><a href="http://xyq.163.com/kaixue/cg.html"> http://xyq.163.com/kaixue/cg.html</a></li>
-        <li><a href="http://xyq.163.com/2013/zhongyuan/"> http://xyq.163.com/2013/zhongyuan/</a></li>
-        <li><a href="http://xyq.163.com/2013/zhongyuan/zhongyuan.html"> http://xyq.163.com/2013/zhongyuan/zhongyuan.html</a></li>
-        <li><a href="http://y3.163.com/2013/guoqing/silin.html"> http://y3.163.com/2013/guoqing/silin.html</a></li>
-        <li><a href="http://xy2.163.com/xxy2/story/page.html"> http://xy2.163.com/xxy2/story/page.html</a></li>
-        <li><a href="http://lj.163.com/video/"> http://lj.163.com/video/</a></li>
-        <li><a href="http://lj.163.com/skills/"> http://lj.163.com/skills/</a></li>
-        <li><a href="http://game.163.com/2015/welcome/"> http://game.163.com/2015/welcome/</a></li>
-        <li><a href="http://dtws.163.com/2015/zhufu/"> http://dtws.163.com/2015/zhufu/</a></li>
-        <li><a href="http://dtws.163.com/2015/lianmeng/"> http://dtws.163.com/2015/lianmeng/</a></li>
-        <li><a href="http://sq.163.com/2015/youyaoqi/"> http://sq.163.com/2015/youyaoqi/</a></li>
-        <li><a href="http://dtws.163.com/2015/pifeng/"> http://dtws.163.com/2015/pifeng/</a></li>
-        <li><a href="http://ma.163.com/?from=nietop"> http://ma.163.com/?from=nietop</a></li>
-        <li><a href="http://zmq.163.com/2015/xiari/"> http://zmq.163.com/2015/xiari/</a></li>
+        <li><a target="_blank" href="http://wh2.163.com/pk/video.html"> http://wh2.163.com/pk/video.html</a></li>
+        <li><a target="_blank" href="http://wh2.163.com/pk/duizhenbiao.html"> http://wh2.163.com/pk/duizhenbiao.html</a></li>
+        <li><a target="_blank" href="http://wh2.163.com/pk/"> http://wh2.163.com/pk/</a></li>
+        <li><a target="_blank" href="http://xyq.163.com/kaixue/cg.html"> http://xyq.163.com/kaixue/</a></li>
+        <li><a target="_blank" href="http://xyq.163.com/kaixue/cg.html"> http://xyq.163.com/kaixue/cg.html</a></li>
+        <li><a target="_blank" href="http://xyq.163.com/2013/zhongyuan/"> http://xyq.163.com/2013/zhongyuan/</a></li>
+        <li><a target="_blank" href="http://xyq.163.com/2013/zhongyuan/zhongyuan.html"> http://xyq.163.com/2013/zhongyuan/zhongyuan.html</a></li>
+        <li><a target="_blank" href="http://y3.163.com/2013/guoqing/silin.html"> http://y3.163.com/2013/guoqing/silin.html</a></li>
+        <li><a target="_blank" href="http://xy2.163.com/xxy2/story/page.html"> http://xy2.163.com/xxy2/story/page.html</a></li>
+        <li><a target="_blank" href="http://lj.163.com/video/"> http://lj.163.com/video/</a></li>
+        <li><a target="_blank" href="http://lj.163.com/skills/"> http://lj.163.com/skills/</a></li>
+        <li><a target="_blank" href="http://game.163.com/2015/welcome/"> http://game.163.com/2015/welcome/</a></li>
+        <li><a target="_blank" href="http://dtws.163.com/2015/zhufu/"> http://dtws.163.com/2015/zhufu/</a></li>
+        <li><a target="_blank" href="http://dtws.163.com/2015/lianmeng/"> http://dtws.163.com/2015/lianmeng/</a></li>
+        <li><a target="_blank" href="http://sq.163.com/2015/youyaoqi/"> http://sq.163.com/2015/youyaoqi/</a></li>
+        <li><a target="_blank" href="http://dtws.163.com/2015/pifeng/"> http://dtws.163.com/2015/pifeng/</a></li>
+        <li><a target="_blank" href="http://ma.163.com/?from=nietop"> http://ma.163.com/?from=nietop</a></li>
+        <li><a target="_blank" href="http://zmq.163.com/2015/xiari/"> http://zmq.163.com/2015/xiari/</a></li>
     </ul>
     <div class="works_list">
         <ul>
