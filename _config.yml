@@ -4,7 +4,6 @@ email: 90arther@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
     Hi,This is Arther. If you are the phone company, I already sent the money. If you are a female, don't worry, I have plenty of money.
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://www.90arther.net" # the base hostname & protocol for your site
 twitter_username: 90arther
 github_username:  90arther
 
